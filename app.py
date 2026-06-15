@@ -71,6 +71,7 @@ def create_app():
     frontend_dir = os.path.join(base_dir, "FRONTEND")
     app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
     app.config.from_object(Config)
+    app.config["FLASK_ENV"] = os.getenv("FLASK_ENV", "development")
 
     # ── Initialise extensions ────────────────────────────────────────────
     # Extensions are instantiated in extensions.py to avoid circular imports;
@@ -174,7 +175,8 @@ def create_app():
         from models.logs import PredictionLog, RecommendationLog # noqa: F401
         db.create_all()
 
-    _seed_users(app)
+    if app.config.get("FLASK_ENV") != "production":
+        _seed_users(app)
 
     # ── Background Daily Sync ────────────────────────────────────────────
     # APScheduler runs a background thread that scrapes CBE exchange rates

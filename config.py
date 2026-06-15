@@ -7,11 +7,39 @@ the app can start without an env file, but **must** be overridden in production.
 """
 
 import os
+import ssl
 from datetime import timedelta
+from urllib.parse import quote_plus
+
 from dotenv import load_dotenv
 
 # Load .env file from the project root into os.environ
 load_dotenv()
+
+
+def _build_database_uri() -> str:
+    """Assemble a SQLAlchemy MySQL URI from env vars (URL-encodes credentials)."""
+    explicit = os.getenv("DATABASE_URI")
+    if explicit:
+        return explicit
+
+    user = quote_plus(os.getenv("DB_USER", "root"))
+    password = quote_plus(os.getenv("DB_PASSWORD", ""))
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "3306")
+    name = os.getenv("DB_NAME", "optirate_db")
+    return f"mysql+pymysql://{user}:{password}@{host}:{port}/{name}"
+
+
+def _build_engine_options() -> dict:
+    """Connection pool + optional TLS for cloud MySQL (e.g. Aiven)."""
+    options = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
+    }
+    if os.getenv("DB_SSL", "false").lower() in ("1", "true", "required", "yes"):
+        options["connect_args"] = {"ssl": ssl.create_default_context()}
+    return options
 
 
 class Config:
@@ -31,19 +59,12 @@ class Config:
     SECRET_KEY = os.getenv("JWT_SECRET_KEY", "fallback-dev-secret")
 
     # ── Database ──
-    # Individual components allow easy per-environment overrides (e.g. in CI).
-    _db_user = os.getenv("DB_USER", "root")
-    _db_pass = os.getenv("DB_PASSWORD", "")
-    _db_host = os.getenv("DB_HOST", "localhost")
-    _db_port = os.getenv("DB_PORT", "3306")
-    _db_name = os.getenv("DB_NAME", "optirate_db")
-
-    # Assembled MySQL URI using PyMySQL as the DBAPI driver
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URI",
-        f"mysql+pymysql://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
-    )
+    SQLALCHEMY_DATABASE_URI = _build_database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = _build_engine_options()
+
+    # ── CORS (only needed if frontend is on a different origin) ──
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "")
 
     # ── JWT ──
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "fallback-dev-secret")
