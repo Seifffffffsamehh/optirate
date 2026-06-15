@@ -1,0 +1,45 @@
+================================================================================
+                    OPTIRATE — PHASE 3.2 SUMMARY
+              Strategic Decision & Risk Engine — Implementation
+                            2026-04-20
+================================================================================
+
+OBJECTIVE:
+  Transform raw Prophet predictions into actionable financial decisions via 
+  volatility tracking, worst-case scaling, and expected-gain evaluation rules.
+
+STATUS: ✓ COMPLETE — Logic and tests fully validated.
+
+────────────────────────────────────────────────────────────────────────────────
+
+KEY UPGRADES (Phase 3.2 Additions):
+
+1. VOLATILITY ENGINE
+   - Queries `ExchangeHistory` to capture the immediate last 7 historical days.
+   - Calculates dynamic variance mapping mathematically using standard deviations mapped against average pricing.
+   - Categorizes natively:
+     * `< 0.5%`   → "low"
+     * `0.5 - 1.5%` → "medium"
+     * `> 1.5%`   → "high"
+
+2. STRATEGIC RECOMMENDATION CORE
+   - Designed mathematically bound algorithms interpreting `MAX yhat` (for sells) and `MIN yhat` (for buys) against predictive caches preventing duplicated Prophet compilation.
+   - Actionable triggers evaluating explicit thresholds: `expected_gain >= 0.015 AND worst_case_gain > 0.005 AND volatility != "high"`.
+   - Built-in High Volatility overrides breaking scenarios safely down into immediate action (`TRADE NOW` overrides triggered natively for unexpected shocks under `0.03`).
+
+3. SCENARIO SIMULATIONS & CONFIDENCE
+   - Established risk algorithms scaling Confidence Scores up to 100 via bounds limits parsing upper/lower ranges of yhat (`1 - (yhat_upper - yhat_lower) / yhat * 100`).
+   - Mapped structured Scenario parameters strictly into numerical formats handling `wait` and `trade_now` representations logically.
+
+4. ENDPOINT `POST /api/v3/recommend`
+   - Added via `routes/v3.py` securely behind Identity scoping (`jwt_required`).
+   - Restricts generic users safely to `USD` & `EUR`.
+   - Exposes comprehensive data JSON compliant with Phase 1 & 2 unifying schemas.
+
+────────────────────────────────────────────────────────────────────────────────
+
+MODIFIED FILES:
+  services/ai/ai_service.py (Added get_strategic_recommendation function)
+  routes/v3.py              (Added POST /api/v3/recommend block)
+
+================================================================================

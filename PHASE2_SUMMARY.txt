@@ -1,0 +1,197 @@
+================================================================================
+                   OPTIRATE — PHASE 2 SUMMARY REPORT
+               Financial Data Engine Implementation
+                        2026-04-20
+================================================================================
+
+1. FILES CREATED
+================================================================================
+
+  services/__init__.py          — Package init for services directory
+  services/cache.py             — Thread-safe in-memory cache with configurable TTL
+  services/currency_engine.py   — Currency scraper for egrates.com
+  services/gold_engine.py       — Gold price scraper for edahabapp.com
+  services/silver_engine.py     — Silver price scraper for dahabmasr.com
+  services/history_engine.py    — Historical data pipeline for CBE exchange rates
+  models/exchange_history.py    — SQLAlchemy model for exchange_history table
+  routes/v2.py                  — V2 API blueprint with 4 endpoints
+  PHASE2_SUMMARY.txt            — This file
+
+  Total new files: 9
+
+
+2. FILES MODIFIED
+================================================================================
+
+  app.py
+    - Registered v2 blueprint
+    - Added ExchangeHistory model import for auto-table creation
+    - Updated docstring
+
+  requirements.txt
+    - Added: requests==2.33.1, beautifulsoup4==4.14.3
+    - Re-pinned: sqlalchemy==2.0.41
+
+
+3. APIs IMPLEMENTED
+================================================================================
+
+  Endpoint                          Method   Auth     Description
+  ─────────────────────────────────────────────────────────────────────
+  /api/v2/currencies                GET      JWT      Exchange rates from Egyptian banks
+  /api/v2/currencies?currency=USD   GET      JWT      Rates for a specific currency
+  /api/v2/gold                      GET      JWT      Gold prices (role-filtered)
+  /api/v2/silver                    GET      JWT      Silver price per gram
+  /api/v2/history/<currency>        GET      JWT      Historical exchange rates from DB
+
+  All responses follow unified schema:
+    Success → {"status": "success", "message": "...", "data": {...}}
+    Error   → {"status": "error", "message": "..."}
+
+
+4. DATA SOURCES USED
+================================================================================
+
+  Source                      Data Type       Method
+  ─────────────────────────────────────────────────────────────────────
+  egrates.com/currency/{X}    Currencies      HTML table scraping (BeautifulSoup)
+  edahabapp.com               Gold prices     HTML parsing + regex extraction
+  dahabmasr.com/silver-...    Silver prices   HTML parsing + regex extraction
+  cbe.org.eg/ar/.../hist...   Historical FX   HTML table parsing → MySQL storage
+
+  Required currencies:
+    USD, EUR, SAR, AED, KWD, QAR, GBP, AUD, CAD, JPY, CNY
+
+  Excluded banks (filtered from output):
+    - بنك الشركة المصرفية العربية الدولية
+    - بنك التعمير والإسكان
+    - مصرف أبوظبي الإسلامي
+    - البنك المصري الخليجي
+    - ميد بنك
+    - المصرف المتحد
+
+
+5. CACHING STRATEGY
+================================================================================
+
+  Implementation: Thread-safe in-memory dict with TTL (services/cache.py)
+
+  Engine              Cache Key Pattern      TTL
+  ─────────────────────────────────────────────────────────────────────
+  Currency engine     currency_{CODE}        5 minutes (300s)
+  Gold engine         gold_all               5 minutes (300s)
+  Silver engine       silver                 5 minutes (300s)
+  History engine      history_{CODE}_{LIM}   10 minutes (600s)
+
+  Rationale:
+    - 5-minute TTL balances freshness vs. upstream load
+    - Per-currency caching avoids re-fetching unchanged data
+    - Thread-safe locks prevent race conditions under concurrent requests
+
+
+6. FALLBACK LOGIC
+================================================================================
+
+  All three live engines implement a fallback system:
+
+  Currency Engine:
+    - If egrates.com scrape returns 0 results for a currency → use static
+      fallback rates (snapshot of recent real data)
+    - Fallback entries are tagged with "_fallback": true
+
+  Gold Engine:
+    - If edahabapp.com scrape returns 0 results → use static fallback
+      (24K, 21K, 18K with approximate EGP values)
+    - Fallback entries tagged with "_fallback": true
+
+  Silver Engine:
+    - If dahabmasr.com scrape returns 0 results → use static fallback
+      (approximate per-gram EGP value)
+    - Fallback entry tagged with "_fallback": true
+
+  All fallback data uses current timestamps to avoid confusing consumers.
+
+
+7. ROLE-BASED ACCESS CONTROL
+================================================================================
+
+  Role        Currencies                    Gold
+  ─────────────────────────────────────────────────────────────────────
+  free        USD, EUR, SAR, AED, GBP       18K only
+  premium     All 11 currencies             18K, 21K, 24K
+  admin       All 11 currencies             18K, 21K, 24K
+
+  Silver and History endpoints are available to all authenticated users.
+
+
+8. DATABASE SCHEMA (NEW TABLE)
+================================================================================
+
+  Table: exchange_history
+
+  Column     Type          Constraints
+  ─────────────────────────────────────────────────────────────────────
+  id         INT           PRIMARY KEY, AUTO_INCREMENT
+  currency   VARCHAR(10)   NOT NULL, INDEXED
+  date       DATE          NOT NULL, INDEXED
+  rate       FLOAT         NOT NULL
+
+  Unique Constraint: (currency, date) — prevents duplicate imports
+
+
+9. ISSUES ENCOUNTERED
+================================================================================
+
+  a) Python 3.15 Alpha Compatibility:
+     - lxml could not be compiled (requires MSVC C++ Build Tools)
+     - Resolved by using Python's built-in html.parser with BeautifulSoup
+
+  b) JavaScript-Rendered Pages:
+     - egrates.com per-currency pages initially appeared JS-rendered
+     - Investigation revealed the data IS present in server-side HTML tables
+     - edahabapp.com and dahabmasr.com also partially render via JS, but
+       gold karat text and silver price data are present in the static HTML
+
+  c) egrates.com Scraper:
+     - Initial implementation used CSS selectors for /history/ and /banks/ links
+     - These links were NOT present in the static HTML (JS-injected hrefs)
+     - Rewrote to parse <table><tr><td> structure which IS server-rendered
+     - Each row: [bank_name, buy_rate, sell_rate, timestamp]
+
+  d) CBE Historical Data:
+     - The CBE historical page may require JS rendering or specific form
+       submissions to return data. The endpoint is ready for ingestion
+       but may need a scheduled task or manual trigger.
+
+
+10. PROJECT STRUCTURE (AFTER PHASE 2)
+================================================================================
+
+  optirate/
+  ├── app.py                          # Entry point (Phase 1 + Phase 2)
+  ├── config.py                       # Environment-based config
+  ├── extensions.py                   # Flask extensions init
+  ├── .env                            # Secrets (not committed)
+  ├── .gitignore
+  ├── requirements.txt                # Pinned dependencies
+  ├── PHASE2_SUMMARY.txt              # This report
+  ├── models/
+  │   ├── __init__.py
+  │   ├── user.py                     # User model (Phase 1)
+  │   └── exchange_history.py         # Exchange history model (Phase 2)
+  ├── routes/
+  │   ├── __init__.py
+  │   ├── auth.py                     # Auth endpoints (Phase 1)
+  │   ├── health.py                   # Health check (Phase 1)
+  │   └── v2.py                       # Financial data endpoints (Phase 2)
+  └── services/
+      ├── __init__.py
+      ├── cache.py                    # Shared caching utility
+      ├── currency_engine.py          # Currency scraper
+      ├── gold_engine.py              # Gold price scraper
+      ├── silver_engine.py            # Silver price scraper
+      └── history_engine.py           # CBE history pipeline
+
+================================================================================
+                         END OF PHASE 2 REPORT
+================================================================================

@@ -14,3 +14,7 @@ node_modules/
 # Build artifacts
 dist/
 build/
+
+optirate_backup.sql
+.sixth/
+instance/

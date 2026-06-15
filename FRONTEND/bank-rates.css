@@ -1,0 +1,239 @@
+/* bank-rates.css: Institutional Table List Component logic isolating grid components safely for Data Scaling */
+
+/* Page Header Override structurally separating Control Nodes dynamically */
+.page-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.page-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.page-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.2rem;
+}
+
+.page-subtitle {
+    font-size: 1.05rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.header-icon-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(108, 92, 231, 0.1);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 15px rgba(108, 92, 231, 0.15);
+}
+
+/* Control Knobs Architecture natively syncing Flex contexts */
+.controls-group {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.currency-select {
+    background: rgba(255, 255, 255, 0.05); /* Premium glass styling */
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    padding: 0.7rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: var(--transition);
+}
+
+.currency-select:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.currency-select option {
+    background: var(--bg-deep); 
+    color: var(--text-main);
+}
+
+.btn-sort {
+    background: var(--primary-action);
+    color: white;
+    padding: 0.7rem 1.4rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-sort:hover {
+    background: #5b4cc4;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.35);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    .page-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+}
+
+/* Advanced Rates Grid Table Logic - Maintaining Glass Contexts universally via Flex */
+.table-container {
+    width: 100%;
+    overflow-x: auto; 
+    padding-bottom: 2rem;
+    scrollbar-width: thin; 
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.rates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-width: 850px;
+}
+
+/* Base columns definition */
+.rates-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr;
+    padding: 0 1.5rem 0.5rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    align-items: center;
+}
+
+#rates-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.rate-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: rgba(26, 26, 46, 0.6); 
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    backdrop-filter: blur(12px);
+}
+
+/* Lift on hover */
+.rate-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: rgba(108, 92, 231, 0.4);
+    background: rgba(26, 26, 46, 0.8);
+}
+
+.col-inst {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 1.05rem;
+}
+
+.bank-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.col-price {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Granular Trend Arrow Indicators dynamically bound inline CSS natively */
+.trend-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 800;
+}
+.trend-up-icon {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+.trend-down-icon {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.col-spread {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--soft-purple);
+    background: rgba(162, 155, 254, 0.1);
+    padding: 0.35rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+    width: max-content;
+}
+
+/* Action Trigger UX mapped explicitly per user constraint logic */
+.btn-ask-ai {
+    background: transparent;
+    border: 1px solid var(--primary-action);
+    color: white;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+}
+
+.btn-ask-ai:hover {
+    background: var(--primary-action);
+    color: white;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+
+.btn-ask-ai span {
+    margin-left: 0.4rem;
+}

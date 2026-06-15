@@ -1,0 +1,85 @@
+/* Interest Rates Page */
+
+.ir-header { text-align: center; padding: 20px 0 10px; }
+.ir-header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+.ir-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* Card Grid */
+.ir-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 28px; }
+
+.ir-card {
+    padding: 32px 28px; border-radius: 16px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(12px);
+    text-align: center; position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(20px);
+    animation: irFadeIn 0.6s ease forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.ir-card:nth-child(1) { animation-delay: 0.1s; }
+.ir-card:nth-child(2) { animation-delay: 0.25s; }
+.ir-card:nth-child(3) { animation-delay: 0.4s; }
+.ir-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+
+/* Glow border */
+.ir-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: 16px;
+    padding: 1px; background: var(--card-accent, rgba(255,255,255,0.08));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+.ir-card:hover::before { opacity: 0.8; }
+
+.ir-card.accent-amber { --card-accent: linear-gradient(135deg, #F59E0B44, #F59E0B11); }
+.ir-card.accent-green { --card-accent: linear-gradient(135deg, #10B98144, #10B98111); }
+.ir-card.accent-blue  { --card-accent: linear-gradient(135deg, #3B82F644, #3B82F611); }
+
+/* Card internals */
+.ir-flag { font-size: 2.8rem; margin-bottom: 8px; display: block; }
+.ir-institution { font-size: 1.05rem; font-weight: 600; color: #e2e8f0; margin-bottom: 4px; }
+.ir-region { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-bottom: 20px; }
+
+.ir-rate {
+    font-size: 3.8rem; font-weight: 800; letter-spacing: -2px;
+    background: linear-gradient(180deg, #f1f5f9, #94a3b8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.1; margin-bottom: 16px;
+    text-shadow: 0 0 40px rgba(255,255,255,0.08);
+}
+
+/* Trend pill */
+.ir-trend {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.82rem; font-weight: 600; margin-bottom: 8px;
+}
+.ir-trend.cut   { background: rgba(245,158,11,0.15); color: #F59E0B; }
+.ir-trend.hike  { background: rgba(16,185,129,0.15); color: #10B981; }
+.ir-trend.hold  { background: rgba(148,163,184,0.15); color: #94a3b8; }
+
+.ir-prev { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+.ir-updated { font-size: 0.75rem; color: #64748b; }
+
+/* Info Section */
+.ir-info {
+    margin-top: 32px; padding: 28px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    opacity: 0; animation: irFadeIn 0.6s 0.55s ease forwards;
+}
+.ir-info h2 { font-size: 1.15rem; font-weight: 700; color: #cbd5e1; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.ir-info ul { list-style: none; padding: 0; }
+.ir-info li { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: #94a3b8; font-size: 0.9rem; line-height: 1.6; display: flex; gap: 10px; }
+.ir-info li:last-child { border-bottom: none; }
+.ir-info li::before { content: '→'; color: var(--soft-purple, #a78bfa); font-weight: 700; flex-shrink: 0; }
+
+@keyframes irFadeIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Loading */
+.ir-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; gap: 16px; }
+.ir-spinner { width: 40px; height: 40px; border: 3px solid rgba(168,139,250,0.15); border-top-color: #a78bfa; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) { .ir-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; } }
+@media (max-width: 600px) { .ir-rate { font-size: 2.8rem; } .ir-card { padding: 24px 20px; } }

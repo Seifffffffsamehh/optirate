@@ -1,0 +1,167 @@
+/* payment.css: Premium Mock Payment Modal — OptiRate Phase 3.3 */
+.payment-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(8,8,18,.88);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;z-index:3000;opacity:1;visibility:visible;transition:all .35s cubic-bezier(.25,.8,.25,1)}
+.payment-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.payment-card{width:92%;max-width:480px;background:linear-gradient(165deg,rgba(26,26,50,.95),rgba(15,15,30,.98));border:1px solid rgba(108,92,231,.25);border-radius:20px;padding:0;position:relative;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,.6),0 0 60px rgba(108,92,231,.12),inset 0 1px 0 rgba(255,255,255,.06);transform:translateY(0) scale(1);transition:transform .35s cubic-bezier(.25,.8,.25,1)}
+.payment-overlay.hidden .payment-card{transform:translateY(30px) scale(.95)}
+.payment-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;border-radius:21px;background:linear-gradient(135deg,rgba(108,92,231,.4),rgba(6,182,212,.3),rgba(255,215,0,.2));z-index:-1;animation:borderGlow 4s ease-in-out infinite alternate}
+@keyframes borderGlow{0%{opacity:.5;filter:blur(2px)}100%{opacity:1;filter:blur(4px)}}
+.payment-header{padding:28px 32px 20px;text-align:center;position:relative;border-bottom:1px solid rgba(255,255,255,.05)}
+.payment-header .diamond-icon{font-size:2.5rem;display:block;margin-bottom:8px;animation:floatDiamond 3s ease-in-out infinite}
+@keyframes floatDiamond{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.payment-header h2{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#A29BFE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;letter-spacing:-.5px}
+.payment-header .price-tag{font-size:.95rem;color:var(--text-muted);font-weight:500}
+.payment-header .price-tag strong{color:#FFD700;font-weight:800;font-size:1.1rem}
+.payment-close-btn{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);font-size:1.2rem;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease}
+.payment-close-btn:hover{background:rgba(255,82,82,.15);border-color:rgba(255,82,82,.3);color:#FF5252;transform:rotate(90deg)}
+.premium-features-strip{display:flex;justify-content:center;gap:20px;padding:14px 32px;background:rgba(108,92,231,.04);border-bottom:1px solid rgba(255,255,255,.04)}
+.feature-pill{display:flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;color:var(--text-muted);letter-spacing:.3px}
+.feature-pill .pill-icon{font-size:.85rem}
+.payment-body{padding:24px 32px 8px}
+.payment-form-group{margin-bottom:18px}
+.payment-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:7px}
+.payment-input{width:100%;background:rgba(10,10,22,.7);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:13px 16px;color:var(--text-main);font-family:'Inter',monospace;font-size:.95rem;font-weight:500;letter-spacing:.5px;transition:all .25s ease}
+.payment-input::placeholder{color:rgba(255,255,255,.18);font-weight:400}
+.payment-input:focus{outline:none;border-color:var(--primary-action);background:rgba(20,20,40,.9);box-shadow:0 0 0 3px rgba(108,92,231,.15),0 4px 12px rgba(0,0,0,.3)}
+.payment-input.input-error{border-color:#FF5252;box-shadow:0 0 0 3px rgba(255,82,82,.15)}
+.payment-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card-number-wrapper{position:relative}
+.card-brand-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.3rem;opacity:.5;transition:opacity .2s ease}
+.card-number-wrapper .payment-input{padding-right:44px}
+.card-number-wrapper:focus-within .card-brand-icon{opacity:1}
+.payment-footer{padding:8px 32px 28px}
+.btn-pay{width:100%;padding:15px 24px;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(135deg,#6C5CE7 0%,#06B6D4 50%,#FFD700 100%);background-size:200% 200%;color:#fff;letter-spacing:.3px;box-shadow:0 6px 25px rgba(108,92,231,.35);transition:all .3s ease;animation:payBtnShimmer 3s ease-in-out infinite}
+@keyframes payBtnShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.btn-pay:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(108,92,231,.5)}
+.btn-pay:active{transform:translateY(0)}
+.btn-pay:disabled{opacity:.6;cursor:not-allowed;transform:none;animation:none}
+.btn-pay .btn-spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.payment-security-notice{text-align:center;padding:12px 32px 20px;font-size:.72rem;color:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;gap:5px}
+.payment-security-notice svg{opacity:.4}
+.payment-error{background:rgba(255,82,82,.08);border:1px solid rgba(255,82,82,.2);border-radius:10px;padding:10px 16px;margin:0 32px 16px;font-size:.85rem;color:#FF5252;font-weight:500;display:none;align-items:center;gap:8px}
+.payment-error.visible{display:flex}
+.payment-success-state{text-align:center;padding:48px 32px;display:none}
+.payment-success-state.visible{display:block}
+.payment-success-state .success-checkmark{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,#10B981,#06B6D4);display:flex;align-items:center;justify-content:center;font-size:2rem;animation:successPop .5s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 8px 30px rgba(16,185,129,.3)}
+@keyframes successPop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+.payment-success-state h3{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:8px}
+.payment-success-state p{color:var(--text-muted);font-size:.95rem;margin-bottom:4px}
+.payment-success-state .expiry-date{color:#10B981;font-weight:700;font-size:.9rem}
+.btn-done{margin-top:24px;padding:12px 40px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.08);color:var(--text-main);font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s ease;font-family:'Inter',sans-serif}
+.btn-done:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4000}
+@media(max-width:520px){.payment-card{width:96%;border-radius:16px}.payment-header,.payment-body,.payment-footer,.payment-security-notice{padding-left:20px;padding-right:20px}.payment-error{margin-left:20px;margin-right:20px}.payment-row{grid-template-columns:1fr}.premium-features-strip{flex-wrap:wrap;gap:10px;padding:12px 20px}}
+
+/* Interactive Credit Card Preview */
+.credit-card-preview-container {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 320px;
+    margin: 20px auto 10px auto;
+    height: 190px;
+}
+.credit-card-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.credit-card-preview.is-flipped {
+    transform: rotateY(180deg);
+}
+.cc-front, .cc-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #fff;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.cc-front::before, .cc-back::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, #6C5CE7 0%, #06B6D4 100%);
+    opacity: 0.8;
+    z-index: -1;
+}
+.cc-back {
+    transform: rotateY(180deg);
+    padding: 24px 0;
+}
+.cc-logo {
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.cc-logo span {
+    font-weight: 400;
+    opacity: 0.8;
+}
+.cc-chip {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+}
+.cc-number {
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    font-family: monospace;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
+}
+.cc-details {
+    display: flex;
+    justify-content: space-between;
+}
+.cc-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 2px;
+    display: block;
+}
+.cc-name, .cc-expiry {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.cc-stripe {
+    width: 100%;
+    height: 40px;
+    background: #111;
+    margin-bottom: 20px;
+}
+.cc-cvv-wrapper {
+    padding: 0 20px;
+    text-align: right;
+}
+.cc-cvv-stripe {
+    background: #fff;
+    color: #333;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 1rem;
+    font-style: italic;
+}

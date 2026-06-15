@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Forecasts | OptiRate</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Design System Modules -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="prediction.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- 1. Internal Navbar -->
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html" class="active">Prediction</a>
+                <a href="recommendation.html">Recommendation</a>
+                <a href="interest-rates.html">Interest Rates</a>
+                <a href="investors.html">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="dashboard-main container">
+        
+        <!-- 2. Header & Controls -->
+        <div class="prediction-header section-spacing">
+            <div class="prediction-header-content">
+                
+                <div class="page-title-group">
+                    <div class="header-icon-custom ai-icon-box">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-action)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="page-title">AI Forecasts</h1>
+                        <p class="page-subtitle">Advanced machine learning predictions on market trends.</p>
+                    </div>
+                </div>
+                
+                <div class="controls-glass-panel glass-card">
+                    <select id="currency-select" class="form-select currency-select">
+                        <option value="" disabled selected>Select Currency</option>
+                    </select>
+                    <button class="btn" style="background:var(--primary-action); color:white; font-weight:700; border:none;" id="btn-run-model">Run AI Model 🧠</button>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- 3. Initial Empty State -->
+        <div id="empty-state" class="empty-state-container glass-card section-spacing">
+            <div class="glow-brain-icon">
+                <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 0 0-10 10c0 5 4 8 4 10h12c0-2 4-5 4-10A10 10 0 0 0 12 2z"></path>
+                    <path d="M12 22v-4"></path>
+                    <path d="M8 22v-2"></path>
+                    <path d="M16 22v-2"></path>
+                    <path d="M12 14c2-2 4-2 4-4a4 4 0 0 0-8 0c0 2 2 2 4 4z"></path>
+                </svg>
+            </div>
+            <h2 class="empty-title">Forecasting Engine Idle</h2>
+            <p class="empty-subtitle">Select a currency above and run the Prophet model to generate a 14-day market projection based on macro-economic indicators.</p>
+        </div>
+
+        <!-- 4. Results State -->
+        <div id="results-state" class="results-state-container section-spacing hidden">
+            
+            <!-- Banner Matrix -->
+            <div class="warning-banner glass-card">
+                <div class="banner-content">
+                    <div class="banner-icon-bg">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="banner-title">Models Retraining</h4>
+                        <p class="banner-text">New data ingestion in progress. Predictions update hourly.</p>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="border-color:#F59E0B; color:#F59E0B;" id="btn-force-refresh">Force Refresh</button>
+            </div>
+
+            <!-- Focus Metric Matrix: ONE Premium Card -->
+            <div class="premium-forecast-card glass-card">
+                <div class="forecast-card-header">
+                    <div class="currency-pairing">
+                        <span class="currency-flag" id="fc-flag">🇺🇸</span>
+                        <h2 id="fc-pair">USD / EGP</h2>
+                        <span class="ml-badge">14-Day Projection</span>
+                        <span class="ml-badge" style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2);">Model Status: Calibrated</span>
+                    </div>
+                    <div class="confidence-score">
+                        <span class="conf-label">AI Confidence Score</span>
+                        <div class="conf-value" id="fc-confidence">94%</div>
+                    </div>
+                </div>
+                
+                <div class="forecast-card-body">
+                    <!-- Core Analytical Modules -->
+                    <div class="forecast-metrics">
+                        <div class="metric-block">
+                            <div class="metric-label">Current Spot</div>
+                            <div class="metric-value"><span style="color:#94a3b8; font-size:1.2rem;">EGP </span><span id="fc-current">48.20</span></div>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-block">
+                            <div class="metric-label">Projected Target</div>
+                            <div class="metric-value projection-color"><span style="color:var(--soft-purple); opacity:0.6; font-size:1.2rem;">EGP </span><span id="fc-target">49.10</span></div>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-block">
+                            <div class="metric-label">Risk Bounds</div>
+                            <div class="metric-value" style="font-size:1.2rem; margin-top: 5px;" id="fc-bounds">48.50 - 49.80</div>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-block">
+                            <div class="metric-label">Expected Trend</div>
+                            <div class="trend-box" id="fc-trend">&#8599; +1.8%</div>
+                        </div>
+                    </div>
+
+                    <!-- Dummy Trajectory Graph natively utilizing filters purely via SVG interpolation -->
+                    <div class="forecast-graph-container">
+                        <div class="graph-overlay-text">Model Visual Output Trajectory</div>
+                        <svg viewBox="0 0 1000 150" preserveAspectRatio="none" class="forecast-svg">
+                            <defs>
+                                <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#6C5CE7" stop-opacity="0.5"/>
+                                    <stop offset="100%" stop-color="#6C5CE7" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <path class="fc-fill" d="M0,100 C200,120 400,60 1000,20 L1000,150 L0,150 Z" />
+                            <!-- Dashed inference plotting mapping -->
+                            <path class="fc-line dashed-forward" d="M0,100 C200,120 400,60 1000,20" />
+                            
+                            <!-- Origin marker -->
+                            <circle cx="0" cy="100" r="4" fill="#A29BFE" />
+                            <!-- Target pulse marker -->
+                            <circle cx="996" cy="20" r="7" fill="#6C5CE7" class="pulse-marker" />
+                        </svg>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- User Settings Modal -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h2 class="section-subtitle">User Settings</h2>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="calc-label">Name</label>
+                    <div class="input-with-btn">
+                        <input type="text" id="profile-name-input" class="calc-input">
+                        <button id="update-name-btn" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="calc-label">Email</label>
+                    <input type="email" id="profile-email-input" class="calc-input" readonly>
+                </div>
+                
+                <div class="plan-status-group">
+                    <div class="plan-info">
+                        <span class="calc-label">Current Plan:</span>
+                        <span id="profile-plan-badge" class="badge-plan">Free</span>
+                    </div>
+                    <button id="upgrade-plan-btn" class="btn btn-gold hidden">Upgrade to Premium</button>
+                </div>
+                
+                <!-- Logout Button -->
+                <button id="modal-logout-btn" class="btn btn-outline" style="border-color: var(--danger-red); color: var(--danger-red); width: 100%; margin-top: 20px;">Logout</button>
+            </div>
+            
+            <!-- Toast notification container -->
+            <div id="toast-notification" class="toast hidden">Profile Updated!</div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="prediction.js?v=4"></script>
+    <script src="profile.js"></script>
+    <script src="contact-widget.js"></script>
+    <script src="payment.js"></script>
+
+    <!-- Global Footer -->
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <!-- Column 1: Brand & Socials -->
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+                <a href="mailto:optirate0@gmail.com" class="footer-contact-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    optirate0@gmail.com
+                </a>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" title="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                    <a href="#" class="social-link" title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+                    <a href="#" class="social-link" title="GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+                    <a href="https://www.instagram.com/optirate.egy?igsh=ZnVsazBlYWppb2sz" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Core Features -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">Market Overview</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Account Management -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                    <li><a href="javascript:void(0)" onclick="openPaymentModal()" class="premium-link">Upgrade to Premium</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

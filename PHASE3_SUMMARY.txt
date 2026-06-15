@@ -1,0 +1,56 @@
+================================================================================
+                    OPTIRATE — PHASE 3 SUMMARY
+              Historical Ingestion and AI Forecasting Layer
+                            2026-04-20
+================================================================================
+
+OBJECTIVE:
+  Implement Historical Data Ingestion (CBE Scraper) and AI Forecasting Engine
+  using Prophet for predicting currency bounds to premium and free users.
+
+STATUS: ✓ COMPLETE — All backend endpoints configured and passing.
+
+────────────────────────────────────────────────────────────────────────────────
+
+NEW FEATURES & IMPLEMENTATIONS:
+
+1. HISTORICAL DATA INGESTION (CBE SCRAPER)
+   - Updated `cbe_provider.py` to implement a 10s request timeout with an HTTPAdapter supporting 3 Retries over common failures (500, 502, 503, 504).
+   - Targeted only USD, EUR, SAR, AED, GBP in the scraper.
+   - Refactored `history_engine.py` to optimize SQL operations using `ON DUPLICATE KEY UPDATE` (`sqlalchemy.dialects.mysql.insert`) bulk processing instead of querying line by line.
+   - Designed 2 new admin endpoints:
+     * `POST /api/v3/ingest-history`
+     * `GET /api/v3/debug-history/<currency>`
+
+2. AI FORECASTING ENGINE (PROPHET)
+   - Created `services/ai/prophet_model.py` that encapsulates Prophet model configuration (`changepoint_prior_scale=0.08`, `seasonality_mode='multiplicative'`, `interval_width=0.95`).
+   - Created `services/ai/ai_service.py` to handle loading datasets via `ExchangeHistory`, converting to Pandas, resampling (`'D'`), and forwarding nulls with `ffill()`.
+   - Generates robust `expected`, `lower` limit, and `upper` limit bounds for UI presentation.
+   - Implemented Horizon Control via Role-Based Access:
+     * Premium Users / Admins: 14 Days forecast.
+     * Free Users: 2 Days forecast.
+   - Added Fallback System: Included a linear regression backup protocol that engages natively if `<30 days` of data exists or C-Extensions fail to compile. 
+
+3. CACHING & ENDPOINTS
+   - Exposes `GET /api/v3/predict/<currency>`.
+   - Binds to centralized `cache_manager` logic appending `pred_{currency}_{role}` keys utilizing a 1-hour expiration.
+
+4. DEPENDENCIES & COMPILATION SAFETY
+   - Added `prophet`, `pandas`, `numpy`, and `scikit-learn` to `requirements.txt`.
+   - Included seamless Python import fallbacks to intercept OS-level compiler linkage failures on 3.15 alphas, maintaining API continuity safely behind a `pure_python_linear_fallback` engine without dropping requests.
+
+────────────────────────────────────────────────────────────────────────────────
+
+MODIFIED FILES:
+  app.py
+  requirements.txt
+  services/providers/cbe_provider.py
+  services/engine/history_engine.py
+  
+CREATED FILES:
+  routes/v3.py
+  services/ai/__init__.py
+  services/ai/ai_service.py
+  services/ai/prophet_model.py
+
+================================================================================

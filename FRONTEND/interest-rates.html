@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest Rates | OptiRate</title>
+    <meta name="description" content="Track global central bank interest rates — Egypt CBE, US Federal Reserve, and ECB policy rates.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="interest-rates.css">
+</head>
+<body class="dashboard-body">
+
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html">Prediction</a>
+                <a href="recommendation.html">Recommendation</a>
+                <a href="interest-rates.html" class="active">Interest Rates</a>
+                <a href="investors.html">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-main container">
+
+        <div class="ir-header section-spacing">
+            <h1>Interest Rates</h1>
+            <p>Global Central Bank Policy Rates — Monetary policy at a glance</p>
+        </div>
+
+        <div id="ir-grid" class="ir-grid">
+            <div id="ir-loading" class="ir-loading" style="grid-column: 1 / -1;">
+                <div class="ir-spinner"></div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Loading interest rates...</p>
+            </div>
+        </div>
+
+        <div class="ir-info glass-card section-spacing">
+            <h2>💡 How Interest Rates Affect Exchange Rates</h2>
+            <ul>
+                <li>Higher interest rates attract foreign investment, increasing demand for the local currency and typically strengthening it against others.</li>
+                <li>When a central bank cuts rates, the currency often weakens as investors seek higher returns elsewhere — this directly impacts exchange rates in Egypt.</li>
+                <li>The spread between Egypt's rate (27.25%) and the US rate (4.50%) is a key driver of EGP/USD dynamics — a wider spread can support the Egyptian pound.</li>
+            </ul>
+        </div>
+
+    </main>
+
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="interest-rates.js"></script>
+    <script src="contact-widget.js"></script>
+</body>
+</html>

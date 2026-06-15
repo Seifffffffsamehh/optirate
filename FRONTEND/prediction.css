@@ -1,0 +1,285 @@
+/* prediction.css: Controlling UI constraints linking Prophet AI visual modules mapping dynamically sequentially */
+
+.prediction-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+@media (max-width: 900px) {
+    .prediction-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+}
+
+.ai-icon-box {
+    background: rgba(108, 92, 231, 0.15);
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.25);
+    color: var(--primary-action);
+}
+
+.controls-glass-panel {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(26, 26, 46, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.currency-select {
+    background: rgba(255, 255, 255, 0.05); /* Unified style bridging with bank-rates.css natively */
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 700;
+    outline: none;
+    min-width: 220px;
+    cursor: pointer;
+}
+.currency-select option {
+    background: var(--bg-deep); 
+    color: var(--text-main);
+}
+
+/* Empty State Architectures */
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 2rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.glow-brain-icon {
+    color: var(--primary-action);
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 0 25px rgba(108, 92, 231, 0.5));
+    animation: pulseBrain 3.5s infinite alternate;
+}
+@keyframes pulseBrain {
+    0% { filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.4)); transform: scale(0.98); }
+    100% { filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.9)); transform: scale(1.05); }
+}
+
+.empty-title {
+    font-size: 2.2rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.5px;
+}
+.empty-subtitle {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+/* Results State Architecture */
+.hidden {
+    display: none !important;
+}
+.results-state-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Banner Component */
+.warning-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-left: 5px solid #F59E0B;
+    background: rgba(26, 26, 46, 0.8);
+}
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.banner-icon-bg {
+    background: rgba(245, 158, 11, 0.15);
+    padding: 0.6rem;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+}
+.banner-title { 
+    font-size: 1.2rem; 
+    color: white; 
+    margin-bottom: 0.2rem; 
+    font-weight: 800; 
+}
+.banner-text { 
+    font-size: 1rem; 
+    color: #94a3b8; 
+}
+
+/* Central Focus Forecast Card Metric Matrix */
+.premium-forecast-card {
+    padding: 3rem;
+    border-top: 3px solid rgba(108, 92, 231, 0.6);
+    box-shadow: 0 -5px 30px rgba(108, 92, 231, 0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.forecast-card-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    margin-bottom: 2.5rem;
+}
+.currency-pairing { 
+    display: flex; 
+    align-items: center; 
+    gap: 1.25rem; 
+}
+.currency-flag { font-size: 2.2rem; }
+.currency-pairing h2 { 
+    font-size: 2.6rem; 
+    color: white; 
+    font-weight: 800; 
+    letter-spacing: -1px; 
+}
+.ml-badge {
+    background: rgba(108, 92, 231, 0.15); 
+    border: 1px solid rgba(108, 92, 231, 0.4); 
+    color: var(--soft-purple);
+    padding: 0.4rem 1rem; 
+    border-radius: var(--radius-pill); 
+    font-size: 0.9rem; 
+    font-weight: 700;
+}
+
+.confidence-score {
+    text-align: right;
+}
+.conf-label { 
+    font-size: 0.9rem; 
+    color: #94a3b8; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+}
+.conf-value { 
+    font-size: 3.5rem; 
+    font-weight: 800; 
+    color: #00E676; 
+    text-shadow: 0 0 20px rgba(0,230,118,0.35); 
+    line-height: 1.1; 
+}
+
+.forecast-metrics {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    background: rgba(0,0,0,0.25);
+    padding: 2.5rem; 
+    border-radius: var(--radius-md); 
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(255,255,255,0.02);
+}
+.metric-block {
+    flex: 1; 
+    text-align: center;
+}
+.metric-divider {
+    width: 1px; 
+    height: 60px; 
+    background: rgba(255,255,255,0.05);
+}
+.metric-label { 
+    font-size: 1.05rem; 
+    color: #cbd5e1; 
+    font-weight: 600; 
+    margin-bottom: 0.6rem; 
+    letter-spacing: 0.5px;
+}
+.metric-value { 
+    font-size: 2.8rem; 
+    font-weight: 800; 
+    color: white; 
+}
+.projection-color { 
+    color: var(--primary-action); 
+    text-shadow: 0 0 15px rgba(108, 92, 231, 0.4);
+}
+
+.trend-box {
+    padding: 0.35rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 1.8rem;
+    display: inline-block;
+    font-weight: 800;
+}
+.trend-up {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+.trend-down {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+
+/* SVG Projection Output Overlay Visualizing Intelligence Vectors */
+.forecast-graph-container {
+    width: 100%; 
+    height: 250px; 
+    position: relative; 
+    background: rgba(255,255,255,0.02);
+    border-radius: var(--radius-md); 
+    border: 1px dashed rgba(255,255,255,0.05); 
+    overflow: hidden;
+}
+.graph-overlay-text {
+    position: absolute; 
+    top: 1.5rem; 
+    left: 2rem; 
+    font-size: 0.9rem; 
+    color: rgba(255,255,255,0.3);
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px;
+}
+.forecast-svg { 
+    width: 100%; 
+    height: 100%; 
+    position: absolute; 
+    bottom: -15px; 
+    left: 0;
+}
+.fc-fill { 
+    fill: url(#forecastGrad); 
+    stroke: none; 
+}
+.fc-line { 
+    fill: none; 
+    stroke: var(--primary-action); 
+    stroke-width: 4; 
+    stroke-dasharray: 10 8; 
+    filter: drop-shadow(0 0 10px rgba(108,92,231,0.6)); 
+    animation: dashAdvance 30s linear infinite; 
+}
+@keyframes dashAdvance { 
+    to { stroke-dashoffset: -1000; } 
+}
+.pulse-marker { 
+    animation: markerPulse 2.5s infinite; 
+}
+@keyframes markerPulse { 
+    0% { r: 7; opacity: 1; filter: drop-shadow(0 0 5px #6C5CE7);} 
+    50% { r: 12; opacity: 0.9; filter: drop-shadow(0 0 15px #6C5CE7);} 
+    100% { r: 7; opacity: 1; filter: drop-shadow(0 0 5px #6C5CE7);} 
+}

@@ -1,0 +1,41 @@
+================================================================================
+                    OPTIRATE — PHASE 2.1 SUMMARY
+              Production-Grade Stability Layer — Quick Reference
+                            2026-04-20
+================================================================================
+
+OBJECTIVE:
+  Refactor Phase 2 data engine into layered architecture with provider
+  abstraction, advanced caching, 3-tier failover, and health monitoring.
+  NO new endpoints. NO new features. Only stability + architecture.
+
+STATUS: ✓ COMPLETE — All 10 endpoint tests passing.
+
+────────────────────────────────────────────────────────────────────────────────
+
+NEW ARCHITECTURE:
+
+  services/core/           → Abstractions (BaseProvider, normalizer, response)
+  services/providers/      → Isolated scrapers (egrates, edahab, dahabmasr, cbe)
+  services/cache/          → CacheManager (TTL + versioning + LKG snapshots)
+  services/engine/         → Pure orchestrators (no scraping logic)
+
+────────────────────────────────────────────────────────────────────────────────
+
+KEY UPGRADES:
+
+  1. Provider Abstraction    → 4 providers implementing BaseProvider contract
+  2. Data Normalizer         → Unified {source, currency, buy, sell, timestamp, fallback}
+  3. Response Builder        → Consistent API response envelopes
+  4. Advanced Cache          → Per-domain TTL + LKG snapshots + versioning
+  5. 3-Tier Failover         → Live → LKG Cache → Static Fallback
+  6. Health Monitoring       → Per-provider latency, success rate, fallback tracking
+  7. Error Safety            → try/except in all routes + BaseProvider.fetch()
+
+────────────────────────────────────────────────────────────────────────────────
+
+FILES: 16 created, 1 modified, 5 deleted
+
+  See PHASE2_1_UPGRADE_REPORT.txt for complete details.
+
+================================================================================

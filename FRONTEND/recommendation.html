@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recommendation Engine | OptiRate</title>
+    <!-- Premium Typography Mapping -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Link Layout Arrays Natively -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="recommendation.css">
+    <link rel="stylesheet" href="gated.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- 1. Internal Navbar Component -->
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html">Prediction</a>
+                <a href="recommendation.html" class="active">Recommendation</a>
+                <a href="interest-rates.html">Interest Rates</a>
+                <a href="investors.html">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Main Terminal Grid Container -->
+    <main class="dashboard-main container">
+        
+        <!-- Header Section Block -->
+        <div class="rec-header section-spacing">
+            <div class="page-title-group">
+                <div class="header-icon-custom rec-icon-box">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="9" y1="18" x2="15" y2="18"></line>
+                        <line x1="10" y1="22" x2="14" y2="22"></line>
+                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1.45.62 2.84 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="page-title">AI Recommendation Engine</h1>
+                    <p class="page-subtitle">Enter your trade parameters and let the model analyze the market for you.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. The Input Form Layout Component -->
+        <section class="form-section section-spacing">
+            <div class="rec-form-card glass-card">
+                <div class="form-grid">
+                    
+                    <!-- Action Toggle Buttons Interactivity Context -->
+                    <div class="form-group">
+                        <label class="form-label">Trade Action</label>
+                        <div class="action-toggle-group">
+                            <label class="action-btn buy-btn active">
+                                <input type="radio" name="trade_action" value="buy" checked class="hidden-radio"> BUY
+                            </label>
+                            <label class="action-btn sell-btn">
+                                <input type="radio" name="trade_action" value="sell" class="hidden-radio"> SELL
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Currency Interactivity Context -->
+                    <div class="form-group">
+                        <label class="form-label">Target Asset</label>
+                        <select id="rec-currency" class="form-select rec-select">
+                            <option value="usd">USD Base (EGP)</option>
+                            <option value="eur">EUR Base (EGP)</option>
+                            <option value="gbp">GBP Base (EGP)</option>
+                            <option value="sar">SAR Base (EGP)</option>
+                            <option value="aed">AED Base (EGP)</option>
+                            <option value="kwd">KWD Base (EGP)</option>
+                            <option value="qar">QAR Base (EGP)</option>
+                            <option value="omr">OMR Base (EGP)</option>
+                            <option value="cny">CNY Base (EGP)</option>
+                            <option value="jpy">JPY Base (EGP)</option>
+                            <option value="cad">CAD Base (EGP)</option>
+                            <option value="aud">AUD Base (EGP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Input Trade Amount Interactivity Context -->
+                    <div class="form-group">
+                        <label class="form-label">Trade Volume (Numeric)</label>
+                        <div class="input-with-icon">
+                            <input type="number" id="rec-amount" class="form-input rec-input" placeholder="e.g., 1000" min="1">
+                            <span class="input-currency-tag" id="input-tag">USD</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Run AI Functional Submit Button Node -->
+                <button class="btn btn-block btn-large rec-submit-btn mt-4" id="btn-get-rec">
+                    Get Recommendation
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px;">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. The "AI Thinking" Loading State Mechanism (Hidden Node) -->
+        <div id="loading-state" class="loading-state-container glass-card section-spacing hidden">
+            <div class="spinner-container">
+                <div class="ai-spinner"></div>
+            </div>
+            <h3 class="loading-title">Analyzing Market Data...</h3>
+            <p class="loading-subtitle">Evaluating liquidity depth, historical matrices, and Prophet AI volumetric projections.</p>
+        </div>
+
+        <!-- Market Guide / Glossary -->
+        <details class="market-guide glass-card section-spacing">
+            <summary>📖 Understanding Market Terms (أنواع السوق ومستوى المخاطر)</summary>
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #10B981;">📈 Bull Market (سوق صاعد)</div>
+                    <div class="guide-desc">Prices are rising over time. Generally a good time to sell foreign currency or hold assets that are increasing in value.</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #EF4444;">📉 Bear Market (سوق هابط)</div>
+                    <div class="guide-desc">Prices are falling over time. Could be a good opportunity to buy foreign currency at lower rates before a potential rebound.</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #F59E0B;">➖ Sideways Market (سوق عرضي)</div>
+                    <div class="guide-desc">Prices move within a narrow range without a clear upward or downward trend. Lower risk, but also lower opportunity for significant gains.</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #10B981;">🟢 Low Risk (مخاطر منخفضة)</div>
+                    <div class="guide-desc">The market is stable with low volatility. Predictions are more reliable and sudden price swings are unlikely.</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #F59E0B;">🟡 Medium Risk (مخاطر متوسطة)</div>
+                    <div class="guide-desc">Some price fluctuation is expected. Predictions carry moderate uncertainty — proceed with caution.</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-title" style="color: #EF4444;">🔴 High Risk (مخاطر عالية)</div>
+                    <div class="guide-desc">The market is highly volatile and unpredictable. Significant price swings possible — only act if you can tolerate potential losses.</div>
+                </div>
+            </div>
+        </details>
+
+        <!-- 5. The Advanced Results Dashboard (Hidden Node Array) -->
+        <div id="results-state" class="results-dashboard section-spacing hidden">
+            
+            <!-- Top Bar (Decision) Metric Node Matrix -->
+            <div class="decision-bar glass-card text-center">
+                <div class="decision-main">
+                    <div class="decision-verdict" id="res-verdict">BUY NOW</div>
+                    <div class="decision-simple-summary" id="res-simple-summary" style="font-size:1.2rem; margin-top:8px; color:var(--text-color);">Prices are expected to rise. Buy now.</div>
+                    <div class="decision-metadata mt-3">
+                        <p class="verdict-reasoning" id="res-reasoning" style="font-size:0.95rem; color:var(--text-muted); max-width:600px; margin:0 auto;">The forecast suggests that USD prices may rise significantly soon...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="ai-insight-grid mt-4" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <!-- Market Mood -->
+                <div class="insight-card glass-card text-center" style="padding: 20px;">
+                    <div class="insight-label" style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Market Mood</div>
+                    <div class="insight-value" id="res-market-mood" style="font-size:1.4rem; font-weight:700;">Bullish 📈</div>
+                </div>
+                <!-- Risk Level -->
+                <div class="insight-card glass-card text-center" style="padding: 20px;">
+                    <div class="insight-label" style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Risk Level</div>
+                    <div class="insight-value" id="res-risk" style="font-size:1.4rem; font-weight:700;">LOW RISK</div>
+                </div>
+                <!-- Recommendation Signal -->
+                <div class="insight-card glass-card text-center" style="padding: 20px;">
+                    <div class="insight-label" style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">AI Signal Strength</div>
+                    <div class="insight-value" id="res-signal" style="font-size:1.2rem; font-weight:700; color:var(--primary-color);">STRONG SIGNAL</div>
+                </div>
+            </div>
+
+            <!-- Confidence Progress -->
+            <div class="confidence-bar-container glass-card mt-4" style="padding:25px;">
+                <div class="conf-header" style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:600;">
+                    <span class="conf-label" style="color:var(--text-muted);">Forecast Confidence</span>
+                    <span class="conf-percent" id="res-conf" style="font-size:1.2rem; color:var(--primary-light);">78%</span>
+                </div>
+                <div class="progress-bg" style="height:12px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+                    <div class="progress-fill" id="res-conf-bar" style="height:100%; width: 78%; background:linear-gradient(90deg, var(--primary-color), #8B5CF6); border-radius:10px; transition:width 1s ease;"></div>
+                </div>
+            </div>
+
+            <!-- Scenarios & Money Impact -->
+            <div class="money-impact-container glass-card mt-4" style="padding:25px; border-left:4px solid var(--primary-color);">
+                <div class="comp-header" style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                    <div class="comp-icon wait-icon" style="color:var(--primary-color);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <h3 class="comp-title" style="margin:0; font-size:1.2rem;">"If You Wait" Scenario</h3>
+                </div>
+                <div class="comp-body">
+                    <p class="money-impact-text" id="res-wait-scenario" style="font-size:1.3rem; font-weight:600; line-height:1.5;">If you wait, you may pay approximately 320 EGP more.</p>
+                </div>
+            </div>
+
+            <!-- Best/Worst Case -->
+            <div class="scenarios-grid mt-4" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="scenario-card glass-card best-case" style="padding:20px; border-top:3px solid #10B981;">
+                    <h4 class="scenario-title" style="color:#10B981; margin:0 0 10px 0; font-size:1.1rem;">Best Case</h4>
+                    <p class="scenario-text" id="res-best-case" style="margin:0; font-size:0.95rem; color:var(--text-muted); line-height:1.5;">You may save up to 2.4% if the trend continues.</p>
+                </div>
+                <div class="scenario-card glass-card worst-case" style="padding:20px; border-top:3px solid #EF4444;">
+                    <h4 class="scenario-title" style="color:#EF4444; margin:0 0 10px 0; font-size:1.1rem;">Worst Case</h4>
+                    <p class="scenario-text" id="res-worst-case" style="margin:0; font-size:0.95rem; color:var(--text-muted); line-height:1.5;">Unexpected market volatility may reverse the prediction.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- User Settings Modal -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h2 class="section-subtitle">User Settings</h2>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="calc-label">Name</label>
+                    <div class="input-with-btn">
+                        <input type="text" id="profile-name-input" class="calc-input">
+                        <button id="update-name-btn" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="calc-label">Email</label>
+                    <input type="email" id="profile-email-input" class="calc-input" readonly>
+                </div>
+                
+                <div class="plan-status-group">
+                    <div class="plan-info">
+                        <span class="calc-label">Current Plan:</span>
+                        <span id="profile-plan-badge" class="badge-plan">Free</span>
+                    </div>
+                    <button id="upgrade-plan-btn" class="btn btn-gold hidden">Upgrade to Premium</button>
+                </div>
+                
+                <!-- Logout Button -->
+                <button id="modal-logout-btn" class="btn btn-outline" style="border-color: var(--danger-red); color: var(--danger-red); width: 100%; margin-top: 20px;">Logout</button>
+            </div>
+            
+            <!-- Toast notification container -->
+            <div id="toast-notification" class="toast hidden">Profile Updated!</div>
+        </div>
+    </div>
+
+    <!-- Structural Mapping Logic File -->
+    <script src="api.js"></script>
+    <script src="recommendation.js?v=4"></script>
+    <script src="profile.js"></script>
+    <script src="contact-widget.js"></script>
+    <script src="payment.js"></script>
+    <script src="gated-features.js"></script>
+
+    <!-- Global Footer -->
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <!-- Column 1: Brand & Socials -->
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+                <a href="mailto:optirate0@gmail.com" class="footer-contact-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    optirate0@gmail.com
+                </a>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" title="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                    <a href="#" class="social-link" title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+                    <a href="#" class="social-link" title="GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+                    <a href="https://www.instagram.com/optirate.egy?igsh=ZnVsazBlYWppb2sz" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Core Features -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">Market Overview</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Account Management -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                    <li><a href="javascript:void(0)" onclick="openPaymentModal()" class="premium-link">Upgrade to Premium</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

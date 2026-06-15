@@ -1,0 +1,257 @@
+================================================================================
+               OPTIRATE — PHASE 2.1 UPGRADE REPORT
+          Production-Grade Stability Layer Implementation
+                         2026-04-20
+================================================================================
+
+
+1. ARCHITECTURE CHANGES SUMMARY
+================================================================================
+
+  Phase 2 used a flat structure where each engine file (currency_engine.py,
+  gold_engine.py, etc.) contained BOTH scraping logic AND orchestration in a
+  single module. This violated separation of concerns and made testing,
+  debugging, and provider swapping difficult.
+
+  Phase 2.1 refactors into a layered architecture:
+
+  BEFORE (flat):
+    services/
+    ├── cache.py                 ← Simple TTL cache
+    ├── currency_engine.py       ← Scraping + orchestration mixed
+    ├── gold_engine.py           ← Scraping + orchestration mixed
+    ├── silver_engine.py         ← Scraping + orchestration mixed
+    └── history_engine.py        ← Scraping + orchestration mixed
+
+  AFTER (layered):
+    services/
+    ├── core/                    ← Abstractions & contracts
+    │   ├── base_provider.py     ← Abstract base class + ProviderResult
+    │   ├── data_normalizer.py   ← Unified output schema enforcement
+    │   └── response_builder.py  ← API response dict factory
+    │
+    ├── providers/               ← Isolated scraping logic
+    │   ├── egrates_provider.py  ← Currency scraping (egrates.com)
+    │   ├── edahab_provider.py   ← Gold scraping (edahabapp.com)
+    │   ├── dahabmasr_provider.py← Silver scraping (dahabmasr.com)
+    │   └── cbe_provider.py      ← Historical data (cbe.org.eg)
+    │
+    ├── cache/                   ← Advanced cache management
+    │   └── cache_manager.py     ← TTL + versioning + LKG snapshots
+    │
+    └── engine/                  ← Pure orchestrators
+        ├── currency_engine.py   ← Provider → Cache → Normalize
+        ├── gold_engine.py       ← Provider → Cache → Normalize
+        ├── silver_engine.py     ← Provider → Cache → Normalize
+        └── history_engine.py    ← Provider → DB → Cache
+
+
+2. FILES CREATED
+================================================================================
+
+  NEW FILES (16):
+  ─────────────────────────────────────────────────────────────────────
+  services/core/__init__.py           Package init
+  services/core/base_provider.py      Abstract base class + ProviderResult
+  services/core/data_normalizer.py    Unified schema normalizer
+  services/core/response_builder.py   API response factory
+  services/providers/__init__.py      Package init
+  services/providers/egrates_provider.py    Currency scraper (isolated)
+  services/providers/edahab_provider.py     Gold scraper (isolated)
+  services/providers/dahabmasr_provider.py  Silver scraper (isolated)
+  services/providers/cbe_provider.py        CBE history scraper (isolated)
+  services/cache/__init__.py          Package init
+  services/cache/cache_manager.py     Advanced cache with LKG
+  services/engine/__init__.py         Package init
+  services/engine/currency_engine.py  Currency orchestrator
+  services/engine/gold_engine.py      Gold orchestrator
+  services/engine/silver_engine.py    Silver orchestrator
+  services/engine/history_engine.py   History orchestrator
+
+
+3. FILES MODIFIED
+================================================================================
+
+  routes/v2.py
+    - Updated imports from services.engine.* (new paths)
+    - Added response_builder usage for all responses
+    - Wrapped all engine calls in try/except for error safety
+    - Added 'count' field to success responses
+
+
+4. FILES DELETED (superseded)
+================================================================================
+
+  services/cache.py               → replaced by services/cache/cache_manager.py
+  services/currency_engine.py     → replaced by services/engine/currency_engine.py
+  services/gold_engine.py         → replaced by services/engine/gold_engine.py
+  services/silver_engine.py       → replaced by services/engine/silver_engine.py
+  services/history_engine.py      → replaced by services/engine/history_engine.py
+
+
+5. PROVIDER STRUCTURE EXPLANATION
+================================================================================
+
+  Each provider inherits from BaseProvider (services/core/base_provider.py)
+  and MUST implement three things:
+
+    @property name         → unique identifier (e.g., "egrates")
+    _fetch_live(**kwargs)  → raw scraping logic, returns list|dict
+    _get_fallback(**kwargs)→ static snapshot data
+
+  BaseProvider.fetch() orchestrates:
+    1. Calls _fetch_live() with timing
+    2. On success → returns ProviderResult(success=True, data=...)
+    3. On empty result → auto-calls _get_fallback()
+    4. On network/parse error → auto-calls _get_fallback()
+    5. Always records latency in ProviderResult.latency_ms
+
+  ProviderResult fields:
+    - data:       list|dict    The actual data
+    - success:    bool         True if live fetch worked
+    - fallback:   bool         True if using fallback data
+    - reason:     str          Why fallback was needed
+    - latency_ms: float        Round-trip time
+    - source:     str          Provider name
+
+
+6. CACHE SYSTEM UPGRADE DETAILS
+================================================================================
+
+  OLD: SimpleCache
+    - Single TTL for all keys
+    - No persistence across cache misses
+    - No versioning
+
+  NEW: CacheManager (singleton at services/cache/cache_manager.py)
+    - Per-domain TTLs:
+        currency: 300s (5 min)
+        gold:     300s (5 min)
+        silver:   300s (5 min)
+        history:  600s (10 min)
+    - Auto-incrementing version numbers per key
+    - Last-Known-Good (LKG) snapshot store:
+        • Updated on every successful cache.set()
+        • Never expires — always available for failover
+        • Accessible via cache_manager.get_lkg(key)
+    - Thread-safe via threading.Lock
+    - stats() method for monitoring
+
+
+7. FAILOVER LOGIC EXPLANATION
+================================================================================
+
+  Every engine implements a 3-tier failover pipeline:
+
+  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+  │ TIER 1       │     │ TIER 2       │     │ TIER 3       │
+  │ Live Scrape  │────→│ LKG Cache    │────→│ Static       │
+  │ (provider)   │fail │ (never-expir │fail │ Fallback     │
+  │              │     │  snapshot)   │     │ (hardcoded)  │
+  └──────────────┘     └──────────────┘     └──────────────┘
+
+  Tier 1: Live provider fetch via BaseProvider.fetch()
+    → On success: cache result + update LKG → return live data
+
+  Tier 2: Last-Known-Good cache snapshot
+    → Contains the last successful live fetch, regardless of age
+    → Always available after first successful fetch
+    → Returns data tagged with: fallback=true, reason="cache_expired"
+
+  Tier 3: Static fallback data (hardcoded in each provider)
+    → Used only when no LKG exists (cold start + provider down)
+    → Returns data tagged with: fallback=true, reason=<specific_cause>
+
+  Possible fallback reasons:
+    - "provider_empty"     Provider returned empty data
+    - "network_error"      HTTP request failed
+    - "provider_failure"   Unexpected exception in provider
+    - "cache_expired"      Using stale LKG cache
+    - "no_data_available"  All 3 tiers failed (no fallback data either)
+
+
+8. HEALTH MONITORING
+================================================================================
+
+  Each engine maintains internal health metrics:
+
+  Tracked per provider call:
+    - provider:       "egrates" | "edahabapp" | "dahabmasr" | "cbe"
+    - status:         "success" | "fail"
+    - latency_ms:     response time in milliseconds
+    - fallback_used:  true/false
+    - reason:         failure reason (empty on success)
+    - currency:       (for currency engine only)
+
+  Metrics are accessible via get_metrics() on each engine module.
+  Rolling buffer keeps last 100 entries (auto-purges oldest 50).
+
+  Log format (structured Python logging):
+    [egrates] Live fetch OK — 14 item(s) in 2537ms
+    [edahabapp] Live fetch OK — 3 item(s) in 1423ms
+    [dahabmasr] Live fetch OK — 1 item(s) in 892ms
+    [egrates] Network error: ConnectionError(...) (5002ms)
+    [gold] Using LKG cache (age=342s)
+
+
+9. ISSUES FOUND DURING REFACTOR
+================================================================================
+
+  a) Inconsistent response schemas:
+     - Phase 2 currency records had "_fallback" key (underscore prefix)
+     - Phase 2 gold had "karat"+"source" but currencies had "bank" without "source"
+     - Phase 2 silver used "metal"+"price_per_gram" with different structure
+     FIXED: data_normalizer.py enforces consistent schema for all data types
+
+  b) No error wrapping in route handlers:
+     - If any engine threw an unexpected exception, Flask returned HTML 500
+     FIXED: All engine calls in routes/v2.py wrapped in try/except
+
+  c) Cache inconsistency:
+     - Phase 2 used separate SimpleCache instances per engine (each with own
+       TTL and no cross-engine coordination)
+     FIXED: Single CacheManager singleton shared by all engines
+
+  d) No provider isolation:
+     - Scraping logic was tightly coupled to engine orchestration
+     - Changing a scraper required editing the engine logic
+     FIXED: Providers are standalone classes; engines only orchestrate
+
+  e) No failover beyond static data:
+     - Phase 2 fell straight from "live" to "static fallback"
+     - If live failed but a recent fetch had succeeded, that stale
+       data was discarded instead of being reused
+     FIXED: LKG (Last-Known-Good) cache layer inserted between live
+     and static fallback tiers
+
+
+10. STABILITY IMPROVEMENTS ACHIEVED
+================================================================================
+
+  ✓ No endpoint can return empty response silently
+    → Every engine returns fallback data if live fails
+    → Silver engine returns {buy:0, sell:0} as absolute last resort
+
+  ✓ No unhandled exceptions
+    → BaseProvider.fetch() catches all exceptions
+    → Route handlers wrap engine calls in try/except
+    → Global Flask error handlers catch anything else
+
+  ✓ No mixed response formats
+    → data_normalizer.py enforces identical schema per data type
+    → All records include: source, currency, buy, sell, timestamp, fallback
+
+  ✓ Always returns valid JSON
+    → response_builder.py standardizes all API response envelopes
+    → Every route returns jsonify(resp.success/error(...))
+
+  ✓ 3-tier failover guarantees data availability
+    → Live → LKG Cache → Static Fallback
+
+  ✓ Provider-level health monitoring
+    → Latency tracking, failure counting, fallback usage recording
+
+
+================================================================================
+                     END OF PHASE 2.1 UPGRADE REPORT
+================================================================================

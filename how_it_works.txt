@@ -1,0 +1,31 @@
+# OptiRate - How it Works and How to Use It
+
+## Overview
+OptiRate is a comprehensive financial dashboard application designed to track currency exchange rates, metal prices, and provide forecasting and recommendations based on historical data.
+
+## Running the Application
+The application consists of two main components:
+1. **Backend Server (Flask):** 
+   - Runs on `http://127.0.0.1:5000`.
+   - Handles authentication, database operations, and data processing.
+   - It is started via `app.py` within the activated virtual environment.
+2. **Frontend Client (Vite):**
+   - Runs on `http://localhost:5173`.
+   - The user interface is built with HTML/JS/CSS and interacts with the backend via REST APIs.
+   - It is started by running `npx vite` in the `FRONTEND` directory.
+
+## Features & Navigation
+Once you navigate to `http://localhost:5173`, you can explore the following features:
+
+- **Authentication (auth.html):** Secure login and registration. Default test accounts include `admin@test.com`, `premium@test.com`, and `free@test.com` (password: `123456`).
+- **Dashboard (dashboard.html):** A central overview of your financial metrics and quick glances at current rates.
+- **Bank Rates (bank-rates.html):** Real-time tracking and comparison of currency exchange rates across different banks.
+- **Metals (metals.html):** Tracking of precious metal prices (like Gold and Silver) with historical insights.
+- **Predictions (prediction.html):** Leveraging the backend forecasting models (like Prophet) to predict future currency and metal trends.
+- **Recommendations (recommendation.html):** Actionable financial advice and recommendations based on data analysis.
+
+## Background Operations
+The backend continuously syncs daily history in the background to ensure data models have the latest currency and metal rates. The AI/forecasting logic dynamically utilizes this data for robust predictions.
+
+## Support
+Ensure you have the virtual environment properly installed (`requirements.txt`) and your Node.js/npm is up-to-date for Vite functionality.

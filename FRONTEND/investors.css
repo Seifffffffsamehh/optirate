@@ -1,0 +1,98 @@
+/* For Investors Page */
+
+.inv-header { text-align: center; padding: 20px 0 10px; }
+.inv-header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #c084fc, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+.inv-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* Section titles */
+.inv-section-title {
+    font-size: 1.2rem; font-weight: 700; color: #cbd5e1;
+    margin-bottom: 18px; padding-bottom: 10px;
+    border-bottom: 2px solid rgba(168,139,250,0.2);
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* Card Grids */
+.inv-oil-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.inv-stock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 36px; }
+
+/* Asset Card */
+.inv-card {
+    padding: 24px; border-radius: 14px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(12px);
+    border-left: 4px solid var(--card-border, rgba(255,255,255,0.1));
+    opacity: 0; transform: translateY(16px);
+    animation: invFadeIn 0.5s ease forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative; overflow: hidden;
+}
+.inv-card:hover { transform: translateY(-4px); box-shadow: 0 10px 35px rgba(0,0,0,0.25); }
+.inv-card.trend-up   { --card-border: #10B981; }
+.inv-card.trend-down { --card-border: #EF4444; }
+
+/* Staggered delays */
+.inv-card:nth-child(1) { animation-delay: 0.1s; }
+.inv-card:nth-child(2) { animation-delay: 0.2s; }
+.inv-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Card header */
+.inv-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.inv-asset-name { font-size: 0.95rem; font-weight: 600; color: #e2e8f0; }
+.inv-live-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 0.7rem; font-weight: 600; color: #10B981;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.inv-live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #10B981;
+    animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Price */
+.inv-price {
+    font-size: 2.2rem; font-weight: 700; color: #f1f5f9;
+    letter-spacing: -1px; margin-bottom: 8px; line-height: 1.2;
+}
+.inv-unit { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); }
+
+/* Change pill */
+.inv-change {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: 16px;
+    font-size: 0.82rem; font-weight: 600; margin-bottom: 14px;
+}
+.inv-change.up   { background: rgba(16,185,129,0.12); color: #10B981; }
+.inv-change.down { background: rgba(239,68,68,0.12); color: #EF4444; }
+
+/* Sparkline */
+.inv-sparkline-wrap {
+    width: 100%; height: 50px; overflow: hidden; border-radius: 8px;
+    opacity: 0.6; transition: opacity 0.3s ease;
+}
+.inv-card:hover .inv-sparkline-wrap { opacity: 1; }
+.inv-sparkline { width: 100%; height: 100%; }
+
+/* Summary bar */
+.inv-summary {
+    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    padding: 18px 24px; margin-top: 36px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    opacity: 0; animation: invFadeIn 0.5s 0.5s ease forwards;
+}
+.inv-summary-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
+.inv-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+.inv-status-dot.open   { background: #10B981; }
+.inv-status-dot.closed { background: #EF4444; }
+
+/* Loading */
+.inv-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 14px; grid-column: 1 / -1; }
+.inv-spinner { width: 36px; height: 36px; border: 3px solid rgba(168,139,250,0.15); border-top-color: #a78bfa; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes invFadeIn { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 900px) { .inv-stock-grid { grid-template-columns: 1fr; max-width: 450px; margin-left: auto; margin-right: auto; } }
+@media (max-width: 650px) { .inv-oil-grid { grid-template-columns: 1fr; max-width: 450px; margin-left: auto; margin-right: auto; } .inv-price { font-size: 1.8rem; } .inv-summary { gap: 16px; } }

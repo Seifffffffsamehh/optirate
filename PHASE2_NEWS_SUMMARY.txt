@@ -1,0 +1,22 @@
+# PHASE2_NEWS_SUMMARY.txt
+## OptiRate Real-Time Economic News Module
+
+### 1. Architecture
+The news module follows the strict "Providers -> Engine -> Cache" architecture:
+- **Primary Provider (`news_api_provider.py`)**: Fetches live business news for Egypt (`country=eg`, `category=business`) using the NewsAPI.
+- **Fallback Provider (`google_news_provider.py`)**: Utilizes `feedparser` to scrape the Google News RSS feed for "business Egypt" ensuring resilience if NewsAPI fails.
+- **Engine (`news_engine.py`)**: Orchestrates failovers cleanly. If both providers fail, it injects a static array of 3 realistic, hardcoded business news items so the UI is never empty.
+- **Cache**: Wraps the final normalized output via the `CacheManager` for a strict 300-second (5 min) TTL, reducing external API call volume.
+
+### 2. Normalization
+The existing `data_normalizer.py` was extended to include `normalize_news`, enforcing the schema:
+`{ "title", "source", "url", "published_at", "image", "fallback": false }`.
+
+### 3. API Endpoint
+- **Route**: `GET /api/v2/news`
+- **Access**: Public (No JWT required).
+- **Parameters**: `?limit=X` (defaults to 5) and `?keyword=X` (filter by title).
+- **Format**: Follows Phase 1 `ResponseBuilder` standard.
+
+### 4. UI Integration
+`FRONTEND/news-service.js` automatically hooks into `#news-ticker-container` on any page where it is included (Dashboard, Bank Rates). It renders a sleek, vertical, clickable ticker matching the global dark theme.

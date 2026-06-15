@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Investors | OptiRate</title>
+    <meta name="description" content="Global market overview — Oil prices, stock indices, and investment insights for the Egyptian investor.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="investors.css">
+</head>
+<body class="dashboard-body">
+
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html">Prediction</a>
+                <a href="recommendation.html">Recommendation</a>
+                <a href="interest-rates.html">Interest Rates</a>
+                <a href="investors.html" class="active">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-main container">
+
+        <div class="inv-header section-spacing">
+            <h1>For Investors</h1>
+            <p>Global Market Overview — Oil, Commodities & Stock Indices</p>
+        </div>
+
+        <!-- Oil Section -->
+        <section class="section-spacing">
+            <h2 class="inv-section-title">🛢️ Oil Markets</h2>
+            <div id="oil-grid" class="inv-oil-grid">
+                <div class="inv-loading">
+                    <div class="inv-spinner"></div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Loading oil prices...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stock Indices Section -->
+        <section class="section-spacing">
+            <h2 class="inv-section-title">📊 Stock Market Indices</h2>
+            <div id="stock-grid" class="inv-stock-grid">
+                <div class="inv-loading">
+                    <div class="inv-spinner"></div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Loading indices...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Summary Bar -->
+        <div class="inv-summary glass-card">
+            <div class="inv-summary-item" id="market-status">
+                <span class="inv-status-dot closed"></span> Loading...
+            </div>
+            <div class="inv-summary-item">
+                📡 Data Source: Cached Market Data
+            </div>
+            <div class="inv-summary-item">
+                🕐 Last Refresh: <span id="last-refresh">--:--</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="investors.js"></script>
+    <script src="contact-widget.js"></script>
+</body>
+</html>

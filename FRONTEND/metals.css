@@ -1,0 +1,337 @@
+/* metals.css: Specific component tracking identically syncing mapping against User Reference Image */
+
+/* Headers */
+.metals-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.page-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.page-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+    display: flex; 
+    align-items: center; 
+}
+.page-subtitle {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* 2x2 Metals Grid matching perfectly */
+.metal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.metal-card {
+    padding: 1.5rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto;
+    min-height: 185px;
+}
+
+.metal-card.locked {
+    position: relative;
+    opacity: 0.85;
+    cursor: pointer;
+}
+
+.metal-card.locked .content {
+    filter: blur(4px);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.metal-card.locked .blur-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 12, 20, 0.2);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.metal-card.locked .lock-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #6C4CF1;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 14;
+}
+
+.metal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #cbd5e1;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.metal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.metal-dot.gold { background-color: #FBBF24; box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);}
+.metal-dot.silver { background-color: #E2E8F0; box-shadow: 0 0 8px rgba(226, 232, 240, 0.6);}
+.metal-dot.plat { background-color: #93C5FD; box-shadow: 0 0 8px rgba(147, 197, 253, 0.6);}
+
+.metal-ticker {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.metal-price-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metal-price {
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+    letter-spacing: -1.5px;
+}
+
+.currency-symbol {
+    font-size: 1.8rem;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    margin-right: 0.3rem;
+}
+
+.trend-indicator {
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.trend-up {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+.trend-down {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.metal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.update-time {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.view-chart-link {
+    color: #FBBF24;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+}
+.view-chart-link:hover {
+    color: #FDE68A;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+/* Expansion Button UI strictly mapped beneath the grid array globally */
+.expansion-section {
+    margin-top: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.expand-btn {
+    transition: var(--transition);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.btn-active {
+    background: rgba(108, 92, 231, 0.15); 
+    border-color: var(--primary-action) !important;
+}
+
+.hidden-extended {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    visibility: hidden;
+    margin-top: 0;
+}
+
+.show-extended {
+    max-height: 1500px;
+    opacity: 1;
+    visibility: visible;
+    margin-top: 1.5rem;
+}
+
+/* Chart Section Custom styling executing Reference UI mock natively */
+.chart-card {
+    padding: 2.5rem;
+    border-radius: 16px;
+}
+
+.chart-header-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2.5rem;
+}
+
+.chart-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.5px;
+}
+
+.chart-subtitle {
+    color: #94a3b8;
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.chart-legend-custom {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.legend-rect {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+.gold-rect { background: #EAB308; }
+.silver-rect { background: #F1F5F9; }
+
+.chart-wrapper-custom {
+    display: flex;
+    position: relative;
+    height: 320px;
+    margin-bottom: 1.5rem;
+}
+
+.y-axis-left, .y-axis-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 5px 0;
+    z-index: 10;
+}
+
+.y-axis-left {
+    padding-right: 2rem;
+}
+
+.y-axis-right {
+    padding-left: 2rem;
+    align-items: flex-end;
+}
+
+.chart-canvas {
+    flex-grow: 1;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* very faint base */
+}
+
+/* Base horizontal gridlines strictly syncing UI screenshot aesthetic faintly */
+.chart-canvas::before {
+    content: ''; position: absolute; top: 33%; left: 0; right: 0;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+}
+.chart-canvas::after {
+    content: ''; position: absolute; top: 66%; left: 0; right: 0;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+}
+
+.chart-svg-main {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    overflow: visible;
+}
+
+.line-gold-custom { fill: none; stroke: #EAB308; stroke-width: 2.5; filter: drop-shadow(0 2px 4px rgba(234, 179, 8, 0.3)); }
+.fill-gold-custom { fill: url(#gold-fill-grad); stroke: none; }
+
+.line-silver-custom { fill: none; stroke: #F8FAFC; stroke-width: 2; filter: drop-shadow(0 2px 4px rgba(248, 250, 252, 0.2)); }
+.fill-silver-custom { fill: url(#silver-fill-grad); stroke: none; }
+
+.x-axis-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 5rem;
+    padding-right: 5rem;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Responsive Scaling down matrices logically */
+@media (max-width: 992px) {
+    .metal-grid { grid-template-columns: 1fr; }
+    .x-axis-bottom { padding: 0 4rem; }
+}
+@media (max-width: 768px) {
+    .chart-header-custom { flex-direction: column; gap: 1rem; }
+    .chart-wrapper-custom { height: 200px; }
+    .metal-price { font-size: 2.5rem; }
+}

@@ -1,0 +1,115 @@
+"""Prophet model wrapper for currency forecasting."""
+
+import logging
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from prophet import Prophet
+from sklearn.linear_model import LinearRegression
+
+logger = logging.getLogger(__name__)
+
+def generate_forecast(df: pd.DataFrame, days: int) -> tuple[list[dict], str]:
+    """
+    Generate forecast using Prophet. 
+    If data rows < 30, fallback to Linear Regression.
+    
+    Args:
+        df: DataFrame with 'ds' (datetime) and 'y' (float) columns.
+        days: Forecasting horizon in days.
+        
+    Returns:
+        (predictions, model_name)
+    """
+    if df.empty:
+        return [], "none"
+        
+    if len(df) < 30:
+        logger.info("Less than 30 days of data. Using Linear Regression fallback.")
+        return _linear_regression_forecast(df, days), "linear_regression"
+
+    try:
+        model = Prophet(
+            changepoint_prior_scale=0.02,  # Adjusted to prevent over-fitting minor fluctuations
+            seasonality_mode='additive',   # Switched to additive for stability on pegged currencies
+            interval_width=0.95  # 95% confidence interval
+        )
+        model.fit(df)
+        
+        future = model.make_future_dataframe(periods=days, freq='D')
+        forecast = model.predict(future)
+        
+        # Filter only the predicted days
+        last_date = df['ds'].max()
+        last_actual_rate = float(df[df['ds'] == last_date]['y'].iloc[0])
+        
+        pred_df = forecast[forecast['ds'] > last_date].copy()
+        
+        predictions = []
+        for _, row in pred_df.iterrows():
+            expected = row['yhat']
+            
+            # LOGIC GUARD: Cap sudden drops/spikes to 5% from the last known "Ground Truth"
+            max_drop = last_actual_rate * 0.95
+            max_spike = last_actual_rate * 1.05
+            
+            if expected < max_drop:
+                expected = max_drop
+            elif expected > max_spike:
+                expected = max_spike
+                
+            # Ensure bounds encapsulate the clamped expected value
+            lower = min(row['yhat_lower'], expected * 0.99)
+            upper = max(row['yhat_upper'], expected * 1.01)
+            
+            predictions.append({
+                "date": row['ds'].strftime("%Y-%m-%d"),
+                "expected": round(expected, 4),
+                "lower": round(lower, 4),
+                "upper": round(upper, 4)
+            })
+            
+        return predictions, "prophet_ai"
+        
+    except Exception as e:
+        logger.error(f"Prophet forecast failed: {e}")
+        # Fallback to LR if Prophet crashes
+        return _linear_regression_forecast(df, days), "linear_regression_fallback"
+
+def _linear_regression_forecast(df: pd.DataFrame, days: int) -> list[dict]:
+    """Fallback simple linear regression."""
+    df = df.copy()
+    # Convert dates to ordinal for regression
+    df['ds_ord'] = df['ds'].map(pd.Timestamp.toordinal)
+    
+    X = df[['ds_ord']].values
+    y = df['y'].values
+    
+    model = LinearRegression()
+    model.fit(X, y)
+    
+    # Calculate MSE for bounds
+    y_pred_train = model.predict(X)
+    mse = np.mean((y - y_pred_train) ** 2)
+    std_err = np.sqrt(mse)
+    
+    last_date = df['ds'].max()
+    predictions = []
+    
+    for i in range(1, days + 1):
+        target_date = last_date + timedelta(days=i)
+        target_ord = target_date.toordinal()
+        
+        pred_y = model.predict([[target_ord]])[0]
+        
+        # Roughly 95% CI is 1.96 * std_err
+        margin = 1.96 * std_err if std_err > 0 else (pred_y * 0.05)
+        
+        predictions.append({
+            "date": target_date.strftime("%Y-%m-%d"),
+            "expected": round(pred_y, 4),
+            "lower": round(pred_y - margin, 4),
+            "upper": round(pred_y + margin, 4)
+        })
+        
+    return predictions

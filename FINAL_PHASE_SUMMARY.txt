@@ -1,0 +1,76 @@
+OptiRate Phase 3.4 — Premium UI Lock & Feature Gating
+=====================================================
+Completed: April 2026
+
+1. GLOBAL ROLE-BASED STATE & UI SYNC
+------------------------------------
+- Implementation: `FRONTEND/gated-features.js` provides a centralized logic for checking user status (`plan` or `role`).
+- Dynamic Reactivity: The UI reacts instantly to plan upgrades via the `window.GatedFeatures.unlockAll()` method, which is triggered by the payment success event in `payment.js`. This removes all blurs and overlays without a page refresh.
+
+2. GOLD PAGE: SELECTIVE LOCKING
+-------------------------------
+- Normal Access: Gold 18K remains fully visible and interactive for free users.
+- Premium Lock: Gold 21K, 24K, and Silver cards are restricted for free users.
+- Visuals: Restricted cards are blurred (`blur(10px)`) and pointer events are disabled.
+- Premium Overlay: A sleek glassmorphism overlay is centered on locked items with a pulsating lock icon 🔒 and a CTA to upgrade.
+
+3. GOLD CALCULATOR (TOTAL LOCK)
+-------------------------------
+- Restriction: The entire Calculator card in `metals.html` is locked for free users.
+- Message: "🔒 Gold Calculator is a Premium Feature. Plan your investments accurately with our smart tool."
+- CTA: Includes a "Upgrade Now" button that triggers the payment modal.
+
+4. AI RECOMMENDATIONS (PREMIUM GATE)
+------------------------------------
+- Restriction: The input form and results state in `recommendation.html` are hidden for free users.
+- Premium Hero Section: Replaces the form with a high-impact section: "🧠 Unlock AI Financial Intelligence. Get real-time Buy/Sell recommendations based on advanced market analysis."
+- CTA: A large, glowing "Upgrade to Premium" button.
+
+5. THE "PREMIUM-LOCK" REUSABLE SYSTEM
+-------------------------------------
+- CSS Component (`gated.css`): Defines `.premium-locked` and `.premium-overlay`.
+- Design: Dark translucent background (`rgba(11, 14, 20, 0.7)`), backdrop blur, and a subtle purple/cyan border.
+- JS Utility (`gated-features.js`): The `lockElement` function acts as a wrapper that injects the overlay and applies styles to any DOM element.
+
+6. BACKEND ENFORCEMENT
+----------------------
+- Strict Sync: The `@premium_required` decorator has been applied to the following V3 endpoints in `routes/v3.py`:
+    - `POST /api/v3/recommend`
+    - `GET /api/v3/predict/<currency>`
+- Logic: Even if a user bypasses the frontend UI, the backend will return a `403 Forbidden` error with the message: "This is a Premium feature. Please upgrade to gain access."
+
+7. REFRESH & UNLOCK FLOW
+------------------------
+- Instant Unlock: Upon successful mock payment, the `GatedFeatures.unlockAll()` method is called.
+- Effect: All blurs and overlays vanish, the Recommendation form appears, and the Calculator becomes active instantly.
+- Persistence: The 30-day expiration is enforced by the backend middleware, which auto-downgrades the user's `plan` field, triggering the locks again once the subscription lapses.
+
+FILES MODIFIED/CREATED:
+- FRONTEND/gated.css (New)
+- FRONTEND/gated-features.js (New)
+- FRONTEND/metals.html (Updated)
+- FRONTEND/recommendation.html (Updated)
+- FRONTEND/payment.js (Updated)
+- FRONTEND/metals.js (Updated)
+- routes/v3.py (Updated)
+- FINAL_PHASE_SUMMARY.txt (New)
+
+ADDENDUM: CURRENCY GATING & BANK RESTRICTION
+============================================
+Completed: April 2026
+
+1. CURRENCY SELECTION (FREE VS PREMIUM)
+---------------------------------------
+- Free Access: USD and SAR are the only currencies fully accessible.
+- Locked: EUR, GBP, AED, KWD, and all others are restricted.
+- Dynamic Intercept: If a free user selects a locked currency from the dropdown, the table is hidden and a "Premium Currency Intelligence" gate screen appears.
+
+2. BANK-LEVEL RESTRICTION (THE "SINGLE BANK" RULE)
+--------------------------------------------------
+- Visible: For allowed currencies (USD/SAR), free users can see the rate of the first institution in the list (typically CBE or NBE).
+- Restricted: All other bank rows in the list are blurred with a row-level overlay.
+- Interaction: Each locked row displays a "🔒 Unlock All Banks" badge that opens the payment modal on click.
+
+3. REFRESH & UNLOCK FLOW (INTEGRATED)
+-------------------------------------
+- Instant Unlock: Just like the Metals and Recommendation pages, the Bank Rates page responds instantly to the `GatedFeatures.unlockAll()` event, revealing all currencies and all banks across 30+ institutions immediately upon successful payment.

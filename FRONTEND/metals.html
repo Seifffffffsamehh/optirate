@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precious Metals | OptiRate</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="metals.css">
+    <link rel="stylesheet" href="gated.css">
+    <link rel="stylesheet" href="payment.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html" class="active">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html">Prediction</a>
+                <a href="recommendation.html">Recommendation</a>
+                <a href="interest-rates.html">Interest Rates</a>
+                <a href="investors.html">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main container">
+        
+        <!-- Page Header -->
+        <div class="metals-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="page-title-group">
+                <div>
+                    <h1 class="page-title">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.2rem;">
+                            <circle cx="8" cy="12" r="6"></circle>
+                            <circle cx="16" cy="12" r="6"></circle>
+                        </svg>
+                        Precious Metals
+                    </h1>
+                    <p class="page-subtitle">Real-time global market rates for Gold and Silver</p>
+                </div>
+            </div>
+            <div id="sync-indicator" style="font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+                <span class="pulse-dot" style="background-color: var(--soft-purple);"></span> Syncing...
+            </div>
+        </div>
+
+        <!-- 2x2 Grid exactly mapping the reference image UI -->
+        <section class="metals-cards">
+            <div class="metal-grid">
+                <!-- Loading state — replaced by real data from API -->
+                <div id="metals-loading" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 16px;">
+                    <div style="width: 48px; height: 48px; border: 3px solid rgba(251, 191, 36, 0.15); border-top-color: #FBBF24; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500;">Loading live metal prices...</p>
+                    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button Re-arranged to map directly under the widgets accurately -->
+        <section class="expansion-section">
+            <button class="btn btn-outline btn-block btn-large expand-btn" id="btn-explore">Explore Additional Assets &darr;</button>
+            
+            <div id="extended-metals" class="metal-grid hidden-extended mt-4">
+                <!-- Extended Assets will be injected here -->
+            </div>
+        </section>
+
+        </section>
+
+        <!-- Gold Investment Calculator -->
+        <section class="calculator-section" style="margin-top: 40px; margin-bottom: 60px;">
+            <div class="glass-card" style="padding: 30px; max-width: 600px; margin: 0 auto; border-radius: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);">
+                <h3 style="color: var(--text-primary); margin-bottom: 20px; font-weight: 600; text-align: center;"><span class="metal-dot gold"></span> Gold Investment Calculator</h3>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <label for="calc-karat" style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 8px; font-weight: 500;">Select Grade / Asset</label>
+                        <select id="calc-karat" style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-family: inherit; font-size: 1rem; outline: none;">
+                            <option value="">Loading live prices...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="calc-weight" style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 8px; font-weight: 500;">Weight / Quantity</label>
+                        <input type="number" id="calc-weight" value="1" min="0.1" step="0.1" placeholder="Enter amount..." style="width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-family: inherit; font-size: 1rem; outline: none;">
+                    </div>
+                    <div style="margin-top: 10px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Estimated Value</div>
+                        <div id="calc-result" style="font-size: 2.2rem; font-weight: 800; color: #10B981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">EGP 0.00</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- User Settings Modal -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h2 class="section-subtitle">User Settings</h2>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="calc-label">Name</label>
+                    <div class="input-with-btn">
+                        <input type="text" id="profile-name-input" class="calc-input">
+                        <button id="update-name-btn" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="calc-label">Email</label>
+                    <input type="email" id="profile-email-input" class="calc-input" readonly>
+                </div>
+                
+                <div class="plan-status-group">
+                    <div class="plan-info">
+                        <span class="calc-label">Current Plan:</span>
+                        <span id="profile-plan-badge" class="badge-plan">Free</span>
+                    </div>
+                    <button id="upgrade-plan-btn" class="btn btn-gold hidden">Upgrade to Premium</button>
+                </div>
+                
+                <!-- Logout Button -->
+                <button id="modal-logout-btn" class="btn btn-outline" style="border-color: var(--danger-red); color: var(--danger-red); width: 100%; margin-top: 20px;">Logout</button>
+            </div>
+            
+            <!-- Toast notification container -->
+            <div id="toast-notification" class="toast hidden">Profile Updated!</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="api.js"></script>
+    <script src="metals.js"></script>
+    <script src="profile.js"></script>
+    <script src="payment.js"></script>
+    <script src="gated-features.js"></script>
+    <script src="contact-widget.js"></script>
+
+    <!-- Global Footer -->
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <!-- Column 1: Brand & Socials -->
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+                <a href="mailto:optirate0@gmail.com" class="footer-contact-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    optirate0@gmail.com
+                </a>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" title="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                    <a href="#" class="social-link" title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+                    <a href="#" class="social-link" title="GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+                    <a href="https://www.instagram.com/optirate.egy?igsh=ZnVsazBlYWppb2sz" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Core Features -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">Market Overview</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Account Management -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                    <li><a href="javascript:void(0)" onclick="openPaymentModal()" class="premium-link">Upgrade to Premium</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

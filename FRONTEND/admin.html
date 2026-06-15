@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | OptiRate</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="payment.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .admin-card { text-align: center; padding: 25px 20px; }
+        .admin-card h3 { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+        .admin-card .val { font-size: 2.8rem; font-weight: 800; color: #fff; letter-spacing: -1px; }
+        .admin-charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .chart-container { background: var(--card-bg); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color); }
+        .user-table { width: 100%; text-align: left; border-collapse: collapse; margin-top: 20px; font-size: 0.95rem; }
+        .user-table th, .user-table td { padding: 15px 15px; border-bottom: 1px solid var(--border-color); }
+        .user-table th { color: var(--text-muted); font-weight: 600; }
+        .user-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+        .role-select { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 5px; outline: none; font-family: inherit; }
+        .role-select option { background: #0f172a; }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar glassy dashboard-nav">
+        <div class="nav-container fluid-container">
+            <div class="logo">OptiRate</div>
+            <div class="nav-links internal-links">
+                <a href="dashboard.html">Home</a>
+                <a href="metals.html">Metals</a>
+                <a href="bank-rates.html">Bank Rates</a>
+                <a href="prediction.html">Prediction</a>
+                <a href="recommendation.html">Recommendation</a>
+                <a href="interest-rates.html">Interest Rates</a>
+                <a href="investors.html">For Investors</a>
+            </div>
+            <div class="nav-actions">
+                <div class="user-profile" aria-label="User Profile">
+                    <svg class="icon-user" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <a href="#" id="navbar-logout-btn" class="btn btn-ghost">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-main container">
+        <section class="welcome-section" style="margin-bottom: 20px;">
+            <h1 class="welcome-text">Admin Dashboard</h1>
+            <div class="ai-status-card glass-card" style="display:flex; justify-content:space-between; align-items:center; padding: 20px;">
+                <div class="ai-status-content" style="display: flex; align-items: center; gap: 15px;">
+                    <div class="pulse-dot" style="background-color: #10B981; width: 12px; height: 12px; position: static;"></div>
+                    <p style="margin: 0; font-size: 1.1rem;"><strong>System Health:</strong> <span style="color:#10B981;">Online & Running</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. System Overview -->
+        <section class="section-spacing">
+            <h2 class="section-subtitle">System Overview</h2>
+            <div class="admin-grid">
+                <div class="glass-card admin-card">
+                    <h3>Total Users</h3>
+                    <div class="val" id="total-users">--</div>
+                </div>
+                <div class="glass-card admin-card">
+                    <h3>Premium Users</h3>
+                    <div class="val" id="premium-users">--</div>
+                </div>
+                <div class="glass-card admin-card">
+                    <h3>Predictions Today</h3>
+                    <div class="val" id="predictions-today" style="color: #3B82F6;">--</div>
+                </div>
+                <div class="glass-card admin-card">
+                    <h3>Recommendations Today</h3>
+                    <div class="val" id="recommendations-today" style="color: #F59E0B;">--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Insights (Market Trends) -->
+        <section class="section-spacing">
+            <h2 class="section-subtitle">Insights (Market Trends)</h2>
+            <div class="admin-charts-grid">
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 15px; text-align: center; color: var(--text-muted); font-weight: 500;">USD Trend</h3>
+                    <canvas id="usdChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 15px; text-align: center; color: var(--text-muted); font-weight: 500;">EUR Trend</h3>
+                    <canvas id="eurChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Monitoring & Control -->
+        <section class="section-spacing">
+            <h2 class="section-subtitle">Monitoring & Control (User Management)</h2>
+            <div class="glass-card" style="padding: 20px; overflow-x: auto;">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body">
+                        <tr><td colspan="5" style="text-align:center; padding: 30px;">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+    <script src="profile.js"></script>
+    <script src="payment.js"></script>
+    <script src="contact-widget.js"></script>
+
+    <!-- Global Footer -->
+    <footer class="optirate-footer">
+        <div class="footer-container">
+            <!-- Column 1: Brand & Socials -->
+            <div class="footer-col brand-col">
+                <img src="assets/logo.png" alt="OptiRate Logo" class="footer-logo">
+                <p class="footer-bio">Smart currency & gold insights powered by AI. Your ultimate financial companion in the Egyptian market.</p>
+                <a href="mailto:optirate0@gmail.com" class="footer-contact-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    optirate0@gmail.com
+                </a>
+                <div class="footer-socials">
+                    <a href="#" class="social-link" title="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                    <a href="#" class="social-link" title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+                    <a href="#" class="social-link" title="GitHub"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+                    <a href="https://www.instagram.com/optirate.egy?igsh=ZnVsazBlYWppb2sz" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="bank-rates.html">Bank Rates</a></li>
+                    <li><a href="metals.html">Gold Prices</a></li>
+                    <li><a href="prediction.html">Prediction</a></li>
+                    <li><a href="recommendation.html">Recommendation</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">For Investors</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="index.html#pricing">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Core Features -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Core Features</h4>
+                <ul class="footer-links">
+                    <li><a href="prediction.html">AI Predictions</a></li>
+                    <li><a href="recommendation.html">Smart Recommendations</a></li>
+                    <li><a href="bank-rates.html">Real-Time Bank Rates</a></li>
+                    <li><a href="metals.html">Gold & Silver Tracking</a></li>
+                    <li><a href="interest-rates.html">Interest Rates</a></li>
+                    <li><a href="investors.html">Market Overview</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Account Management -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Account</h4>
+                <ul class="footer-links">
+                    <li><a href="auth.html#login">Login</a></li>
+                    <li><a href="auth.html#register">Register</a></li>
+                    <li><a href="javascript:void(0)" onclick="openPaymentModal()" class="premium-link">Upgrade to Premium</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="disclaimer">Data is for informational purposes only and should not be considered financial advice.</p>
+            <p class="copyright">© 2026 OptiRate. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

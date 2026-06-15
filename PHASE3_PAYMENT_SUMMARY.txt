@@ -1,0 +1,110 @@
+OptiRate Phase 3.3 — Premium Mock Payment System
+==================================================
+Completed: April 2026
+
+1. DATABASE SCHEMA
+-------------------
+Two new columns added to the `users` table:
+  - plan VARCHAR(20) DEFAULT 'free' — indexed for fast access control checks
+  - subscription_expires DATETIME NULL — stores the expiration timestamp
+
+SQLAlchemy handles the migration via db.create_all() on startup.
+The `plan` column is indexed to optimize WHERE plan='premium' queries.
+
+2. BACKEND: POST /api/v3/upgrade
+----------------------------------
+Endpoint: POST /api/v3/upgrade
+Security: Requires valid JWT (Bearer token).
+Mock Validation:
+  - All 4 fields required: card_number, name, expiry, cvv
+  - card_number must be exactly 16 digits (regex: ^\d{16}$)
+  - cvv must be 3-4 digits (regex: ^\d{3,4}$)
+
+Business Logic:
+  - If user is ALREADY premium and subscription hasn't expired → 400 error
+  - On success: sets plan='premium', role='premium'
+  - subscription_expires = UTC now + 30 days (timedelta(days=30))
+  - Returns: { plan, role, subscription_expires (ISO format) }
+
+Security (MOCK):
+  - Card data is immediately discarded via `del card_number, cvv, expiry`
+  - Code comment: "SECURITY: This is a MOCK system."
+  - No card data is ever persisted to database or logs
+
+3. SUBSCRIPTION GUARD MIDDLEWARE
+---------------------------------
+Implementation: Two layers of protection
+
+Layer 1 — Global @before_request (app.py):
+  - Runs on every /api/* request
+  - Extracts user from JWT, checks subscription_expires
+  - If current_time > subscription_expires:
+    → Reverts plan to 'free', role to 'free'
+    → Clears subscription_expires
+    → Commits to database
+  - Uses try/except to never block legitimate requests
+
+Layer 2 — premium_required Decorator (routes/v3.py):
+  - Applied to premium-only endpoints
+  - Checks user.plan == 'premium' or user.role == 'admin'
+  - If free user → returns 403: "This is a Premium feature."
+  - Calls _check_and_downgrade_expired() before the check
+
+30-Day Logic:
+  - Calculated as: datetime.utcnow() + timedelta(days=30)
+  - Compared on every request: datetime.utcnow() > subscription_expires
+  - All times stored and compared in UTC for consistency
+
+4. FRONTEND UX
+---------------
+Payment Modal (payment.js + payment.css):
+  - Self-contained: payment.js dynamically injects modal HTML + CSS
+  - Included on all dashboard pages via <script src="payment.js">
+  - Sleek design: animated gradient border, glassmorphism, Cyan/Purple theme
+  - Card number auto-formats with spaces every 4 digits
+  - Client-side validation before API call
+
+Instant UI Update on 200 OK:
+  - Updates localStorage user object with plan='premium'
+  - Changes profile badge to "💎 Premium" with gold gradient
+  - Hides the "Upgrade to Premium" button
+  - Shows success state with expiration date
+  - Fires confetti animation (canvas-based, 150 particles, 7 colors)
+
+State Persistence:
+  - localStorage('user') updated with new plan, role, subscription_expires
+  - Auth login route now includes 'plan' in JWT identity claims
+  - Profile endpoint returns plan and subscription_expires fields
+
+5. TEST CASES
+--------------
+Scenario A: Missing CVV
+  → POST /v3/upgrade with { card_number, name, expiry } (no cvv)
+  → Expect 400: "All payment fields are required"
+
+Scenario B: Free user accesses Premium route
+  → Any endpoint with @premium_required decorator
+  → Expect 403: "This is a Premium feature. Please upgrade to gain access."
+
+Scenario C: Expired subscription
+  → subscription_expires set to a past date
+  → Next API request triggers auto-downgrade
+  → User reverted to free, subscription_expires cleared
+
+6. FILES MODIFIED / CREATED
+-----------------------------
+Backend:
+  - models/user.py — Added plan + subscription_expires columns
+  - routes/v3.py — Added upgrade endpoint, premium_required decorator, helpers
+  - routes/auth.py — Added plan to JWT identity
+  - app.py — Added global subscription_guard @before_request
+
+Frontend:
+  - FRONTEND/payment.css — Payment modal styling (NEW)
+  - FRONTEND/payment.js — Payment logic + dynamic modal injection (NEW)
+  - FRONTEND/profile.js — Updated to show plan, diamond badge, admin badge
+  - FRONTEND/dashboard.html — Added payment modal + script
+  - FRONTEND/bank-rates.html — Added payment.js script
+  - FRONTEND/prediction.html — Added payment.js script
+  - FRONTEND/recommendation.html — Added payment.js script
+  - FRONTEND/metals.html — Added payment.js script
